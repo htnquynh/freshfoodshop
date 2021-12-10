@@ -1,0 +1,99 @@
+/* Price Slider */
+
+.price-slider-wrapper {
+  @apply w-full;
+  /* @apply px-4 py-8; */
+  /* @apply p-2; */
+  @apply pt-4;
+}
+
+.price-slider {
+  @apply w-full;
+  @apply relative;
+}
+
+.price-slider > .slider {
+  @apply h-3;
+  @apply my-0 mx-4;
+  @apply relative;
+}
+
+.slider > .track {
+  @apply absolute inset-0;
+  @apply rounded-full;
+  @apply bg-gray-200;
+}
+
+.slider > .range {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 201, 40, 1),
+    rgba(253, 139, 124, 1)
+  );
+  @apply absolute inset-0;
+  @apply rounded-full;
+}
+
+.slider > .thumb {
+  box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+  transition: box-shadow 0.2s ease-in-out;
+  @apply absolute;
+  @apply w-8 h-8;
+  @apply rounded-full;
+}
+
+.slider > .thumb.left {
+  background-color: rgba(255, 201, 40, 1);
+  @apply left-0 transform -translate-x-4 -translate-y-2.5;
+}
+
+.slider > .thumb.left.hover {
+  box-shadow: 0 0 0 10px rgba(255, 201, 40, 0.2);
+}
+
+.slider > .thumb.left.active {
+  box-shadow: 0 0 0 20px rgba(255, 201, 40, 0.2);
+}
+
+.slider > .thumb.right {
+  background-color: rgba(253, 139, 124, 1);
+  @apply right-0 transform translate-x-4 -translate-y-2.5;
+}
+
+.slider > .thumb.right.hover {
+  box-shadow: 0 0 0 10px rgba(253, 139, 124, 0.2);
+}
+
+.slider > .thumb.right.active {
+  box-shadow: 0 0 0 20px rgba(253, 139, 124, 0.2);
+}
+
+.price-slider > input[type="range"] {
+  pointer-events: none;
+  -webkit-appearance: none;
+  @apply absolute m-0;
+  @apply h-3 w-full;
+  @apply opacity-0;
+  @apply z-20;
+}
+
+.price-slider > input[type="range"]::-webkit-slider-thumb {
+  pointer-events: all;
+  -webkit-appearance: none;
+
+  @apply w-8 h-8;
+  @apply rounded-full;
+  @apply border-0;
+  @apply bg-black;
+}
+
+.slider-value {
+  @apply flex flex-row justify-between;
+}
+
+.slider-value > p {
+  @apply mt-4 mb-0 mx-4;
+  @apply text-sm font-semibold;
+}
+
+

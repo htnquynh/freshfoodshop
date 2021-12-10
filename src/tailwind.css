@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+
+body {
+  font-family: 'Inter', sans-serif;
+  @apply text-secondary;
+  @apply bg-dominant;
+}
+
+a {
+  @apply cursor-pointer;
+}
+
+.input-text {
+  @apply w-72;
+  @apply flex flex-col gap-2;
+}
+.input-text label {
+  @apply font-semibold;
+}
+
+.input-text input[type='text'],
+.input-text input[type='email'],
+.input-text input[type='password'],
+.input-text input[type='phone'] {
+  /* @apply w-72; */
+  @apply p-2;
+  @apply rounded-xl;
+  @apply focus:outline-none;
+  @apply border;
+}
+
+.group-radio-box {
+  @apply w-72;
+  @apply flex flex-col;
+}
+
+label.radio-box, 
+label.check-box {
+  @apply flex flex-row items-center;
+  @apply py-1;
+  @apply cursor-pointer;
+  @apply relative;
+}
+
+label.radio-box input[type='radio'],
+label.check-box input[type='checkbox'] {
+  z-index: -1;
+  @apply opacity-0;
+  @apply absolute inset-0;
+}
+
+label.radio-box input[type="radio"]:disabled ~ .text,
+label.radio-box input[type="radio"]:disabled + .design,
+label.check-box input[type='checkbox']:disabled ~ .text,
+label.check-box input[type='checkbox']:disabled + .design {
+  @apply opacity-40;
+}
+
+label.radio-box .design {
+  @apply w-5 h-5;
+  @apply rounded-full;
+  @apply relative;
+  @apply box-border border border-secondary;
+  transition: 0.3s;
+}
+
+label.check-box .design {
+  @apply w-5 h-5;
+  @apply relative;
+  @apply box-border border border-secondary;
+  transition: 0.3s;
+}
+
+label.radio-box .design::before {
+  @apply font-serif;
+  content: '✔';
+  @apply text-2xl leading-5;
+  @apply w-min;
+  @apply block;
+  @apply absolute -top-1 left-0.5;
+  @apply opacity-0;
+}
+
+label.check-box .design::before {
+  @apply font-serif;
+  content: '✔';
+  @apply text-2xl leading-5;
+  @apply w-min;
+  @apply block;
+  @apply absolute -top-1 left-0.5;
+  @apply opacity-0;
+}
+
+label.radio-box .text,
+label.check-box .text {
+  @apply ml-4;
+  transition: 0.3s;
+}
+
+label.radio-box input[type='radio']:checked + .design::before,
+label.check-box input[type='checkbox']:checked + .design::before {
+  opacity: 1;
+}
+
+label.radio-box input[type='radio']:not([disabled]):hover + .design,
+label.radio-box input[type='radio']:not([disabled]):focus + .design,
+label.check-box input[type='checkbox']:not([disabled]):hover + .design,
+label.check-box input[type='checkbox']:not([disabled]):focus + .design {
+  @apply border border-gold-500;
+  @apply text-gold-500;
+}
+
+label.radio-box input[type='radio']:not([disabled]):hover ~ .text,
+label.check-box input[type='checkbox']:not([disabled]):hover ~ .text {
+  @apply text-gold-500;
+}
+
+
+.input-opt {
+  @apply flex flex-row justify-center gap-2;
+}
+
+.input-opt input[type='text'] {
+  @apply w-12 h-12;
+  @apply text-center font-bold text-xl;
+  @apply p-2;
+  @apply focus:outline-none;
+  @apply rounded-xl;
+  @apply border;
+}
+
+@tailwind components;
+@tailwind utilities;
+
