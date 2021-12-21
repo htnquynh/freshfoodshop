@@ -1,4 +1,4 @@
-import axios from "axios";
+import GroupAPI from "../../api/GroupAPI";
 
 const state = {
   groups: [],
@@ -6,22 +6,29 @@ const state = {
 };
 
 const getters = {
-  groups: (state) => state.groups.filter((g) => g.status == "Enable"),
+  groups: (state) => state.groups,
   selectedGroup: (state) => state.selectedGroup,
 };
 
+function sortGroupByDate(list) {
+  return list.sort(function(a,b){
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+}
+
 const actions = {
   async getGroups({ commit }) {
-    await axios
-      .get("http://localhost:5000/api/group/all")
+    GroupAPI.get()
       .then((res) => {
-        commit("SET_GROUPS", res.data);
+        let groups = res.data;
+        groups = sortGroupByDate(groups);
+        commit("SET_GROUPS", groups);
       })
       .catch((err) => {
         console.log(err);
       });
   },
-  getSelectedGroup({ commit, state }, group_id) {
+  setSelectedGroup({ commit, state }, group_id) {
     const group = state.groups.filter((g) => g._id == group_id)[0];
     commit("SET_SELECTED_GROUP", group);
   },

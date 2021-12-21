@@ -1,127 +1,170 @@
-import axios from "axios";
-// import alert from "vue-simple-alert";
+import CartAPI from "../../api/CartAPI";
 
 const state = {
-  cartItems: [],
+  cart: {
+    user: '',
+    cartItems: [],
+  },
   visibleMiniCart: false,
 };
 
 const getters = {
-  cartItems: (state) => state.cartItems,
+  cart: (state) => state.cart,
   totalPrice: (state) => {
     let cartTotalPrice = 0;
-    state.cartItems.forEach((item) => {
-      cartTotalPrice += parseInt(item.total_price);
+
+    state.cart.cartItems.forEach((item) => {
+      cartTotalPrice += parseInt(item.price);
     });
+
     return cartTotalPrice;
   },
-  noItems: (state) => state.cartItems.length,
+  noItems: (state) => state.cart.cartItems.length,
   visibleMiniCart: (state) => state.visibleMiniCart,
 };
 
 const actions = {
   async setVisibleMiniCart({ commit }) {
-    commit("SET_VISIBLE_MINI_CART");
+    commit("TOGGLE_VISIBLE_MINI_CART");
   },
-  async getCartItems({ commit }) {
+  async getUserCart({ commit }) {
     let token = JSON.parse(sessionStorage.getItem("user_login"));
     let config = {
       headers: { Authorization: "bearer " + token },
     };
 
-    await axios
-      .get("http://localhost:5000/api/getCartItems", config)
-      .then((res) => {
-        commit("GET_CART_ITEMS", res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    CartAPI.getUserCart(config)
+    .then((res) => {
+      if(res.data) {
+        commit("SET_CART", res.data);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   },
-  async updateCart({ dispatch }, { product_id, quantity, itemPrice }) {
+  async addItemToCart({ dispatch }, new_item) {
+    // Get Token
     let token = JSON.parse(sessionStorage.getItem("user_login"));
     let config = {
       headers: { Authorization: "bearer " + token },
     };
-    let price = parseInt(itemPrice) * quantity;
-    price = price.toString();
-    let cartItems = {
-      cartItems: [
-        {
-          product: product_id,
-          quantity,
-          price,
-        },
-      ],
-    };
-    await axios
-      .post("http://localhost:5000/api/addToCart", cartItems, config)
+    // Calc price = unit_price * qty
+    let total_price = parseInt(new_item.price) * new_item.quantity;
+    total_price = total_price.toString();
+    console.log(total_price);
+    let items = [];
+    items.push({product: new_item.id, quantity: new_item.quantity, price: total_price});
+    CartAPI.add(items, config)
       .then((res) => {
         console.log(res.data);
-        dispatch("getCartItems");
+        dispatch("getUserCart")
+        .then(() => {
+          return true;
+        })
       })
       .catch((error) => {
         console.log(error);
+        return false;
       });
   },
-  async addItemToCart(
-    { state, dispatch },
-    { product_id, quantity, itemPrice }
-  ) {
+  async addAllToCart({ dispatch }, items ) {
     let token = JSON.parse(sessionStorage.getItem("user_login"));
     let config = {
       headers: { Authorization: "bearer " + token },
     };
-    const selectItem = state.cartItems.filter((item) => item._id == product_id);
+    items.forEach((item) => {
+      item.price = (parseInt(item.price) * item.quantity).toString();
+    })
+    CartAPI.add(items, config)
+      .then((res) => {
+        console.log(res.data);
+        dispatch("getUserCart")
+        .then(() => {
+          return true;
+        })
+      })
+      .catch((error) => {
+        console.log(error);
+        return false;
+      });
+  },
+  async removeByProductId({ dispatch }, product_id) {
+    let token = JSON.parse(sessionStorage.getItem("user_login"));
+    let config = {
+      headers: { Authorization: "bearer " + token },
+    };
 
-    if (selectItem.length != 0) {
-      quantity += selectItem[0].quantity;
-    }
-
-    let price = parseInt(itemPrice) * quantity;
-    price = price.toString();
-    let cartItems = {
-      cartItems: [
-        {
-          product: product_id,
-          quantity,
-          price,
-        },
-      ],
-    };
-    await axios
-      .post("http://localhost:5000/api/addToCart", cartItems, config)
-      .then((res) => {
-        console.log(res.data);
-        // alert.alert("Add To Cart Successfully!", "Add To Cart", "success");
-        dispatch("getCartItems");
+    CartAPI.removeByProductId(product_id, config)
+    .then((res) => {
+        console.log(res.data.message);
+        dispatch("getUserCart");
       })
       .catch((error) => {
         console.log(error);
       });
   },
-  async removeCartItem({ dispatch }, product_id) {
+  async clearCart({ commit }) {
     let token = JSON.parse(sessionStorage.getItem("user_login"));
     let config = {
       headers: { Authorization: "bearer " + token },
     };
-    await axios
-      .post("http://localhost:5000/api/removeCartItem", { product_id }, config)
-      .then((res) => {
-        console.log(res.data);
-        dispatch("getCartItems");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    CartAPI.clear(config).then(() => {
+      commit("CLEAR_CART");
+    }).catch((error) => {
+      console.log(error);
+    });
   },
+  logoutCart({ commit }) {
+    commit("SET_CART", { user: '',cartItems: [], });
+  }
+  // async removeByProductId({ commit, state }, product_id) {
+  //   let token = JSON.parse(sessionStorage.getItem("user_login"));
+  //   let config = {
+  //     headers: { Authorization: "bearer " + token },
+  //   };
+
+  //   let new_cart_items = state.cart.cartItems.filter((item) => item.product._id != product_id);
+  //   let new_cart = state.cart;
+  //   new_cart.cartItems = new_cart_items;
+
+  //   CartAPI.update(new_cart, config).then(() => {
+  //     commit("SET_CART", new_cart);
+  //   }).catch((error) => {
+  //     console.log(error);
+  //   });
+  // },
+  
+  // async updateItemQuantity({ commit, state }, new_item) {
+  //   let token = JSON.parse(sessionStorage.getItem("user_login"));
+  //   let config = {
+  //     headers: { Authorization: "bearer " + token },
+  //   };
+
+  //   let total_price = parseInt(new_item.price) * new_item.quantity;
+  //   total_price = total_price.toString();
+  //   console.log(total_price);
+
+  //   let index = state.cart.cartItems.findIndex((item) => item.product._id == new_item.id);
+  //   let new_cart = state.cart;
+  //   new_cart.cartItems[index] = {product: new_item.id, quantity: new_item.quantity, price: total_price};
+
+  //   CartAPI.update(new_cart, config).then(() => {
+  //     commit("SET_CART", new_cart);
+  //   }).catch((error) => {
+  //     console.log(error);
+  //   });
+  // },
 };
 
 const mutations = {
-  GET_CART_ITEMS(state, cartItems) {
-    state.cartItems = cartItems;
+  SET_CART(state, cart) {
+    state.cart = cart;
   },
-  SET_VISIBLE_MINI_CART(state) {
+  CLEAR_CART(state) {
+    state.cart.cartItems = [];
+  },
+  TOGGLE_VISIBLE_MINI_CART(state) {
     state.visibleMiniCart = !state.visibleMiniCart;
   },
 };

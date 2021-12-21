@@ -7,6 +7,8 @@ import wishlist from "./modules/wishlist";
 import order from "./modules/order";
 import group from "./modules/group";
 
+import loading from "./modules/loading";
+
 import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
@@ -18,7 +20,8 @@ const storeData = {
     cart,
     wishlist,
     order,
-    group
+    group,
+    loading
   },
   plugins: [
     createPersistedState({

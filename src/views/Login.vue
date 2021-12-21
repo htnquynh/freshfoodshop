@@ -1,64 +1,77 @@
 <template>
-  <div class="shop-page">
-    <div class="page-title">
-      <h2>Login to Your <span class="text-gold-500">Account!</span></h2>
-      <hr>
+  <div class="home relative">
+    <TheHeader class="header-page"/>
+    <MiniCart/>
+    <div class="page-content">
+      <div class="login-form-wrapper">
+        <div class="form-title">
+          <h2>Login to Your <span class="text-gold-500">Account!</span></h2>
+          <!-- <hr> -->
+        </div>
+
+        <div class="login-form">
+          <div class="login-input">
+            <div class="input-text">
+              <label >Username</label>
+              <input ref="username-input" type="text" v-model="username">
+            </div>
+
+            <div class="input-text">
+              <label for="">Password</label>
+              <input ref="password-input" type="password" v-model="password">
+            </div>
+          </div>
+
+          <div class="remember-me-forgot-password">
+            <label class="check-box">
+              <input v-model="check" type="checkbox" value="remember-me" name="remember">
+              <span class="design"></span>
+              <span class="text">Remember me</span>
+            </label>
+            <router-link to='/forgot-password'>
+              <a class="forgot-password">Forgot Password</a>
+            </router-link>
+          </div>
+
+          <div class="login-action">
+            <a ref="btn-login" @click="submitForm()" class="btn-login">
+              <span>Login to Account</span>
+            </a>
+
+            <div class="link-sign-up">
+              <p>Don't have an account?</p>
+              <router-link to="/signup">
+                <a>Sign Up</a>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="login-form">
-      <div class="checkout-basic">
-        <div class="input-text">
-          <label >Username</label>
-          <input ref="username-input" type="text" v-model="username">
-        </div>
-
-        <div class="input-text">
-          <label for="">Password</label>
-          <input ref="password-input" type="password" v-model="password">
-        </div>
-      </div>
-
-      <div class="remember-me-forgot-password">
-        <label class="check-box">
-          <input v-model="check" type="checkbox" value="remember-me" name="remember">
-          <span class="design"></span>
-          <span class="text">Remember me</span>
-        </label>
-        <router-link to='/forgot-password'>
-          <a class="forgot-password">Forgot Password</a>
-        </router-link>
-      </div>
-
-      <div class="checkout-action">
-        <a ref="btn-login" @click="submitForm()" class="btn-checkout">
-          <span>Login</span>
-        </a>
-
-        <div class="link-sign-up">
-          <p>Don't have an account?</p>
-          <router-link to="/signup">
-            <a>Sign Up</a>
-          </router-link>
-        </div>
-      </div>
-    </div>
+    <TheSubscribe/>
+    <TheFooter/>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-// import Swal from 'sweetalert2';
+import TheHeader from '../components/TheHeader.vue';
+import TheFooter from '../components/TheFooter.vue';
+import TheSubscribe from '../components/TheSubscribe.vue';
+import MiniCart from '../components/MiniCart.vue';
+
 import { mapActions } from "vuex";
+import UserAPI from "../api/UserAPI";
 
 export default {
   components: {
+    TheHeader,
+    TheFooter,
+    TheSubscribe,
+    MiniCart,
   },
   data() {
     return {
       check: ['remember-me'],
-
-      snackbar: false,
-      message: "",
       username: "",
       password: "",
     };
@@ -87,70 +100,49 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setUser", "getWishList"]),
+    ...mapActions(["getUserCart", "getWishlist", "setUser"]),
+    login(username, password) {
+      UserAPI.login(username, password)
+        .then((res) => {
+          let user_login = JSON.stringify(res.data.accessToken);
+          sessionStorage.setItem("user_login", user_login);
+          this.setUser(res.data.user);
+          this.getUserCart();
+          this.getWishlist();
+          this.$router.push("/");
+          this.$swal.fire(
+            'Welcome!',
+            'You have successfully logged in.',
+            'success'
+          );
+        })
+        .catch((err) => {
+          console.log(err.message);
+          this.$swal.fire(
+            'Uh oh!',
+            'You have failed to login.',
+            'error'
+          );
+        });
+    },
     async submitForm() {
       if(this.username == '') {
         console.log("Username Empty");
-        this.$swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Please enter your username!',
-        })
+
+        this.$swal.fire(
+          'Oops...',
+          'Please enter your Username!',
+          'error'
+        );
       } else if (this.password == '') {
         console.log("Password Empty");
-        this.$swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Please enter your Password!',
-        })
+        this.$swal.fire(
+          'Oops...',
+          'Please enter your Password!',
+          'error'
+        );
       } else {
-      await axios
-        .get(`http://localhost:5000/api/username-exist/${this.username}`)
-        .then((res) => {
-          console.log(res.data);
-          if (res.data.message) {
-            let msg = res.data.message;
-            if (msg == "Username not exist!") {
-              this.$swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: msg,
-              })
-            } 
-          }
-        })
-        .catch((error) => {
-          console.log(error.response.data.message);
-          if (error.response.data.message == 'Username already exists!') {
-              axios.post("http://localhost:5000/api/loginUser", {
-                username: this.username,
-                password: this.password,
-              })
-              .then((res) => {
-                let user_login = JSON.stringify(res.data.accessToken);
-                sessionStorage.setItem("user_login", user_login);
-                this.setUser(res.data.user);
-                this.getWishList();
-                this.$router.push({ name: "Home" });
-
-                this.$swal.fire(
-                  'Welcome!',
-                  'Successful Login!',
-                  'success'
-                )
-              })
-              .catch((err) => {
-                console.log(err);
-                this.$swal.fire({
-                    icon: 'error',
-                    title: 'Oh no!',
-                    text: 'Password incorrect!',
-                  })
-              });
-          }
-        });
-
-        
+        this.login(this.username, this.password);
       }
     },
   },
@@ -159,22 +151,35 @@ export default {
 
 <style lang="postcss" scoped>
 
-.shop-page {
-  @apply max-w-xs mx-auto;
-  @apply px-4 pb-16 md:pb-24;
-  @apply flex flex-col items-start md:items-center gap-2;
+.home {
+  @apply flex flex-col;
 }
 
-.page-title {
-  @apply py-4 md:py-8;
-  @apply flex flex-col md:justify-center gap-2 md:gap-4;
+.home > .header-page {
+  @apply w-full;
 }
 
-.page-title h2 {
-  @apply text-xl md:text-4xl font-black;
+.page-content {
+  @apply p-0 sm:p-4;
+  @apply bg-white sm:bg-transparent;
 }
 
-.page-title hr {
+.login-form-wrapper {
+  @apply max-w-sm mx-auto;
+  @apply bg-white;
+  @apply px-4 sm:px-6 md:px-8 pb-12 pt-8 sm:pt-10;
+  @apply flex flex-col items-stretch;
+}
+
+.form-title {
+  @apply pb-6;
+}
+
+.form-title h2 {
+  @apply text-2xl font-extrabold;
+}
+
+.form-title hr {
   @apply w-full max-w-3xl;
   @apply border-t border-secondary;
 }
@@ -184,9 +189,13 @@ export default {
   @apply flex flex-col items-center;
 }
 
-.checkout-basic {
-  @apply w-min;
+.login-input {
+  @apply w-full;
   @apply flex flex-col gap-4;
+}
+
+.login-input .input-text {
+  @apply w-full;
 }
 
 .remember-me-forgot-password {
@@ -212,25 +221,24 @@ a.forgot-password {
   @apply font-semibold;
 }
 
-.checkout-action {
+.login-action {
   @apply pt-8 md:pt-10;
   @apply w-full;
   @apply flex flex-col items-center;
 }
 
-a.btn-checkout {
+a.btn-login {
   @apply w-full;
   @apply flex flex-row justify-center items-center gap-2;
-  @apply p-2;
+  @apply px-8 py-3;
   @apply bg-gold-500 text-white;
-  @apply text-base sm:text-lg font-semibold;
-  @apply rounded-xl;
+  @apply text-base font-semibold;
+
+  box-shadow: rgba(255, 201, 40, 0.6) 0px 12px 10px -10px;
 }
 
-
-
 .link-sign-up {
-  @apply pt-3;
+  @apply pt-4;
   @apply flex flex-row items-center gap-2;
   
 }

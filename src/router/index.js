@@ -1,24 +1,41 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import Shop from '../views/Shop.vue'
-import Product from '../views/Product.vue'
-import RecommendMenu from '../views/RecommendMenu.vue'
-import Group from '../views/Group.vue'
-import ShoppingCart from '../views/ShoppingCart.vue'
-import Checkout from '../views/Checkout.vue'
 
-import Login from '../views/Login.vue'
-import Signup from '../views/Signup.vue'
-import ForgotPassword from '../views/ForgotPassword.vue'
-import VerifyUser from '../views/VerifyUser.vue'
-import VerifyChangePassword from '../views/VerifyChangePassword.vue'
-import ChangeForgotPassword from '../views/ChangeForgotPassword.vue'
-import MyAccount from '../views/MyAccount.vue'
+import store from "../store";
+
+const Home = () => import('../views/Home.vue')
+const Shop = () => import('../views/Shop.vue')
+const Product = () => import('../views/Product.vue')
+const RecommendMenu = () => import('../views/RecommendMenu.vue')
+const Group = () => import('../views/Group.vue')
+const ShoppingCart = () => import('../views/ShoppingCart.vue')
+const Checkout = () => import('../views/Checkout.vue')
+const Login = () => import('../views/Login.vue')
+
+const Signup = () => import('../views/Signup.vue')
+const ForgotPassword = () => import('../views/ForgotPassword.vue')
+const VerifyUser = () => import('../views/VerifyUser.vue')
+const VerifyResetPassword = () => import('../views/VerifyResetPassword.vue')
+const ResetPassword = () => import('../views/ResetPassword.vue')
+
+const MyAccount = () => import('../views/MyAccount.vue')
+const Profile = () => import('../views/Profile.vue')
+const MyOrders = () => import('../views/MyOrders.vue')
+const ChangePassword = () => import('../views/ChangePassword.vue')
+
+const Wishlist = () => import('../views/Wishlist.vue')
+const Compare = () => import('../views/Compare.vue')
+
+// const Loading = () => import('../components/Loading.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
+  // {
+  //   path: '/loading',
+  //   name: 'Loading',
+  //   component: Loading
+  // },
   {
     path: '/',
     name: 'Home',
@@ -29,7 +46,9 @@ const routes = [
     name: 'Login',
     component: Login,
     beforeEnter: (to, from, next) => {
-      if (!sessionStorage.getItem("user_login")) {
+      if (sessionStorage.getItem("user_login")) {
+        next("/");
+      } else {
         next();
       }
     },
@@ -50,19 +69,52 @@ const routes = [
     component: VerifyUser
   },
   {
-    path: '/verify-change-password',
-    name: 'VerifyChangePassword',
-    component: VerifyChangePassword
+    path: '/verify-reset-password',
+    name: 'VerifyResetPassword',
+    component: VerifyResetPassword
   },
   {
-    path: '/change-forgot-password',
-    name: 'ChangeForgotPassword',
-    component: ChangeForgotPassword
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword
   },
   {
-    path: '/my-account',
-    name: 'MyAccount',
+    path: '/compare',
+    name: 'Compare',
+    component: Compare
+  },
+  {
+    path: '/account',
     component: MyAccount,
+    beforeEnter: (to, from, next) => {
+      if (!sessionStorage.getItem("user_login")) {
+        next("/login");
+      } else {
+        next();
+      }
+    },
+    children: [
+      {
+        path: '',
+        name: 'MyAccount',
+        component: Profile
+      },
+      {
+        path: 'my-order',
+        name: 'MyOrder',
+        component: MyOrders
+      },
+      {
+        path: 'change-password',
+        name: 'ChangePassword',
+        component: ChangePassword
+      },
+    ]
+  },
+  {
+    path: '/wishlist',
+    name: 'Wishlist',
+    component: Wishlist,
     beforeEnter: (to, from, next) => {
       if (!sessionStorage.getItem("user_login")) {
         next("/login");
@@ -77,7 +129,7 @@ const routes = [
     component: Shop
   },
   {
-    path: '/product',
+    path: '/product/:id',
     name: 'Product',
     component: Product
   },
@@ -87,7 +139,7 @@ const routes = [
     component: RecommendMenu
   },
   {
-    path: '/group',
+    path: '/group/:id',
     name: 'Group',
     component: Group
   },
@@ -121,6 +173,20 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeResolve((to, from, next) => {
+  // If this isn't an initial page load.
+  if (to.name) {
+    // Start the route progress bar.
+    store.dispatch("start_load");
+  }
+  next()
+})
+
+router.afterEach(() => {
+  // Complete the animation of the route progress bar.
+  store.dispatch("stop_load");
 })
 
 export default router

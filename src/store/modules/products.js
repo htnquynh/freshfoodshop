@@ -1,8 +1,10 @@
-import axios from "axios";
+import ProductAPI from "../../api/ProductAPI";
+import CategoryAPI from "../../api/CategoryAPI";
 
 const state = {
   category: [],
-  productList: [],
+  products: [],
+
   keyword: "",
   filteredProduct: [],
   selectedProduct: {},
@@ -10,55 +12,64 @@ const state = {
 };
 
 const getters = {
-  productList: (state) =>
-    state.productList.filter((item) => item.status == "Enable"),
+  products: (state) => state.products,
+  category: (state) => state.category,
   selectedProduct: (state) => state.selectedProduct,
   keyword: (state) => state.keyword,
   filteredProduct: (state) => state.filteredProduct,
-  category: (state) => state.category,
   compareProducts: (state) => state.compareProducts,
 };
 
+function sortProductByDate(list) {
+  return list.sort(function(a,b){
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+}
+
 const actions = {
   async getProducts({ commit }) {
-    await axios
-      .get("http://localhost:5000/api/getallproducts")
-      .then((res) => {
-        commit("GET_PRODUCTS", res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    ProductAPI.get()
+    .then((res) => {
+      let products = res.data;
+      products = sortProductByDate(products);
+      commit("SET_PRODUCTS", products);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   },
+
+  async getCategory({ commit }) {
+    CategoryAPI.get()
+    .then((res) => {
+      commit("SET_CATEGORY", res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  },
+
   getSelectedProduct({ commit, state }, product_id) {
-    const product = state.productList.filter((p) => p._id == product_id)[0];
+    const product = state.products.filter((p) => p._id == product_id)[0];
     commit("SET_SELECTED_PRODUCT", product);
   },
-  async getCategory({ commit }) {
-    await axios
-      .get("http://localhost:5000/api/getallcategory")
-      .then((res) => {
-        commit("SET_CATEGORY", res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+  
   setKeyword({ commit, dispatch }, keyword) {
     commit("SET_KEYWORD", keyword);
     dispatch("getFilteredProduct");
   },
+
   getCompareProducts({ commit, state }, product_id) {
-    const product = state.productList.find((item) => item._id == product_id);
+    const product = state.products.find((item) => item._id == product_id);
     commit("SET_COMPARE_PRODUCTS", product);
   },
+
   deleteCompareProduct({ commit }, product_id) {
     commit("DELETE_COMPARE_PRODUCT", product_id);
   },
+
   getFilteredProduct({ commit, state }) {
-    let filteredList = state.productList.filter(
-      (item) => item.status == "Enable"
-    );
+    let filteredList = state.products;
     filteredList = filteredList.filter((p) => {
       return p.name.toLowerCase().includes(state.keyword.toLowerCase());
     });
@@ -67,8 +78,11 @@ const actions = {
 };
 
 const mutations = {
-  GET_PRODUCTS(state, products) {
-    state.productList = products;
+  SET_PRODUCTS(state, products) {
+    state.products = products;
+  },
+  SET_CATEGORY(state, category) {
+    state.category = category;
   },
   SET_SELECTED_PRODUCT(state, product) {
     state.selectedProduct = product;
@@ -79,9 +93,7 @@ const mutations = {
   SET_KEYWORD(state, keyword) {
     state.keyword = keyword;
   },
-  SET_CATEGORY(state, category) {
-    state.category = category;
-  },
+  
   SET_COMPARE_PRODUCTS(state, product) {
     state.compareProducts.push(product);
   },

@@ -1,87 +1,122 @@
 <template>
-  <div class="shop-page">
-    <div class="page-title">
-      <h2>Forgot Password!</h2>
-      <hr>
-    </div>
+  <div class="home relative">
+    <TheHeader class="header-page"/>
+    <MiniCart/>
+    <div class="page-content">
+      <div class="login-form-wrapper">
+        <div class="form-title">
+          <h2>Forgot Password!</h2>
+        </div>
 
-    <div class="login-form">
-      <div class="checkout-basic">
-        <div class="input-text">
-          <label for="">Email</label>
-          <input type="email">
+        <div class="login-form">
+          <div class="login-input">
+            <div class="input-text">
+              <label for="">Email</label>
+              <input 
+                type="email" 
+                v-model="email">
+            </div>
+          </div>
+
+          <div class="login-action">
+            <a class="btn-login" @click="sendMail()">
+              <span>Reset Password</span>
+            </a>
+          </div>
         </div>
       </div>
-
-      <div class="checkout-action">
-        <a class="btn-checkout">
-          <span>Reset Password</span>
-        </a>
-      </div>
     </div>
+    <TheSubscribe/>
+    <TheFooter/>
   </div>
 </template>
 
 <script>
-// import CartItem from '../components/CartItem.vue';
+import TheHeader from '../components/TheHeader.vue';
+import TheFooter from '../components/TheFooter.vue';
+import TheSubscribe from '../components/TheSubscribe.vue';
+import MiniCart from '../components/MiniCart.vue';
+
+import UserAPI from '../api/UserAPI';
 
 export default {
   components: {
-    // CartItem,
+    TheHeader,
+    TheFooter,
+    TheSubscribe,
+    MiniCart,
   },
   data() {
     return {
-      check: ['remember-me'],
+      email: "",
     };
   },
-  computed: {
-  },
-  filters: {
-    toVND: function(value) {
-      if (typeof value !== "number") {
-        value = parseInt(value);
-        // return value;
-      }
-      var formatter = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-        minimumFractionDigits: 0,
-      });
-      return formatter.format(value);
-    },
-  },
-  watch: {
-    check() {
-      console.log(this.check);
-    }
-  },
-  created() {
-    
-  },
   methods: {
-    
+    async sendMail() {
+      UserAPI.getUserByEmail(this.email)
+      .then((res) => {
+        if(res.data) {
+          UserAPI.forgotPassword(this.email)
+          .then((res) => {
+            console.log(res.data);
+            this.$router.push({
+              name: "VerifyResetPassword",
+              params: { email: this.email },
+            });
+          })
+          .catch((err) => {
+            this.$swal.fire(
+              'Uh oh!',
+              'Something went wrong. Double check your work.',
+              'error'
+            );
+            console.log(err.message);
+          });
+        } else {
+          this.$swal.fire(
+            'Oh oh!',
+            'This email is not registered!',
+            'error'
+          );
+        }
+      })
+      
+    },
   },
 };
 </script>
 
 <style lang="postcss" scoped>
 
-.shop-page {
-  @apply max-w-xs mx-auto;
-  @apply px-4 pb-16 md:pb-24;
-  @apply flex flex-col items-start md:items-center gap-2;
+.home {
+  @apply flex flex-col;
 }
 
-.page-title {
-  @apply py-4 md:py-8;
-  @apply flex flex-col md:justify-center gap-2 md:gap-4;
+.home > .header-page {
+  @apply w-full;
 }
 
-.page-title h2 {
-  @apply text-xl md:text-4xl font-black;
+.page-content {
+  @apply p-0 sm:p-4;
+  @apply bg-white sm:bg-transparent;
 }
 
-.page-title hr {
+.login-form-wrapper {
+  @apply max-w-sm mx-auto;
+  @apply bg-white;
+  @apply px-4 sm:px-6 md:px-8 pb-12 pt-8 sm:pt-10;
+  @apply flex flex-col items-stretch;
+}
+
+.form-title {
+  @apply pb-6;
+}
+
+.form-title h2 {
+  @apply text-2xl font-extrabold;
+}
+
+.form-title hr {
   @apply w-full max-w-3xl;
   @apply border-t border-secondary;
 }
@@ -91,9 +126,13 @@ export default {
   @apply flex flex-col items-center;
 }
 
-.checkout-basic {
-  @apply w-min;
+.login-input {
+  @apply w-full;
   @apply flex flex-col gap-4;
+}
+
+.login-input .input-text {
+  @apply w-full;
 }
 
 .remember-me-forgot-password {
@@ -119,23 +158,24 @@ a.forgot-password {
   @apply font-semibold;
 }
 
-.checkout-action {
+.login-action {
   @apply pt-8 md:pt-10;
   @apply w-full;
   @apply flex flex-col items-center;
 }
 
-a.btn-checkout {
+a.btn-login {
   @apply w-full;
   @apply flex flex-row justify-center items-center gap-2;
-  @apply p-2;
+  @apply px-8 py-3;
   @apply bg-gold-500 text-white;
-  @apply text-base sm:text-lg font-semibold;
-  @apply rounded-xl;
+  @apply text-base font-semibold;
+
+  box-shadow: rgba(255, 201, 40, 0.6) 0px 12px 10px -10px;
 }
 
 .link-sign-up {
-  @apply pt-3;
+  @apply pt-4;
   @apply flex flex-row items-center gap-2;
   
 }

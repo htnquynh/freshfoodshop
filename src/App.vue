@@ -1,26 +1,30 @@
 <template>
   <div id="app">
-    <Header/>
-    
     <router-view/>
-
-    <Service/>
-    <Subscribe/>
-    <Footer/>
+    <LoadScreen :isLoading="isLoading"/>
   </div>
 </template>
 <script>
-import Header from './components/Header.vue';
-import Footer from './components/Footer.vue';
-import Subscribe from './components/Subscribe.vue';
-import Service from './components/Service.vue';
+import LoadScreen from "./components/LoadScreen.vue"
+import { mapActions, mapGetters } from "vuex";
 export default {
   components: {
-    Header,
-    Footer,
-    Subscribe,
-    Service
-  }
+    LoadScreen
+  },
+  data() {
+    return {
+    }
+  },
+  created() {
+    // this.start_load();
+    console.log("In App.vue: " + this.isLoading);
+  },
+  computed: {
+    ...mapGetters(['isLoading']),
+  },
+  methods: {
+    ...mapActions(['start_load']),
+  },
 }
 </script>
 <style>

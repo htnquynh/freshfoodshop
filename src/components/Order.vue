@@ -11,23 +11,10 @@
     <hr class="order-break-line" />
 
     <div class="order-list-item">
-      <div class="order-item" v-for="item in order.orderItems" :key="item._id">
-        <img
-          class="order-item-image"
-          :src="`/products/${item.product.image}`"
-        />
-        <div class="order-item-spec">
-          <div class="product-spec">
-            <p class="product-category">{{ item.product.category }}</p>
-            <p class="product-name">{{ item.product.name }}</p>
-            <div class="product-price-unit">
-              <p class="product-price">{{ item.price | toVND }}</p>
-              <p class="product-unit">/ 1 kg</p>
-              <p class="product-qty">x {{item.quantity}}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <OrderItem
+        v-for="item in order.orderItems" 
+        :key="item._id"
+        :item="item"/>
     </div>
 
     <hr class="order-break-line" />
@@ -51,11 +38,15 @@
 </template>
 
 <script>
+import OrderItem from './OrderItem.vue';
 // import axios from "axios";
 import { mapActions } from "vuex";
 
 export default {
   props: ["order"],
+  components: {
+    OrderItem,
+  },
   data() {
     return {};
   },
@@ -112,11 +103,16 @@ export default {
 
 <style lang="postcss" scoped>
 .order {
-  @apply w-72;
+  /* @apply w-72; */
   @apply p-4;
   @apply flex flex-col gap-3;
-  @apply bg-white;
+  @apply bg-dominant;
   /* @apply divide-y divide-secondary divide-dashed; */
+
+  @apply w-full;
+  @apply rounded-2xl;
+
+  box-shadow: rgba(57, 42, 35, 0.05) 0px 12px 10px -10px;
 }
 
 hr.order-break-line {
@@ -145,7 +141,7 @@ p.order-status {
 
 .order-list-item {
   @apply w-full;
-  @apply flex flex-col gap-1;
+  @apply flex flex-col gap-2;
 }
 
 .order-item {

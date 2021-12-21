@@ -1,7 +1,9 @@
 <template>
   <div class="group-wrapper">
     <div class="group">
-      <img class="group-image" :src="imageGroup(group.image)" alt=""
+      <img 
+        class="group-image" 
+        :src="imageGroup(group.image)"
         @click="detailGroup()">
       <div class="group-spec">
         <p class="group-name">{{ group.title }}</p>
@@ -31,11 +33,9 @@
         <div class="group-ingredients">
           <p>Ingredients</p>
 
-          <!-- <div class="group-list-item-wrapper"> -->
-            <div class="group-list-item">
-              <GroupItem v-for="item in group.material" :key='item._id' :item='item.product'/>
-            </div>
-          <!-- </div> -->
+          <div class="group-list-item">
+            <GroupItem v-for="item in group.material" :key='item._id' :product='item.product'/>
+          </div>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import GroupItem from '../components/GroupItem.vue';
+import GroupItem from './GroupItem.vue';
 
 import { mapActions } from "vuex";
 export default {
@@ -55,7 +55,6 @@ export default {
     toVND: function(value) {
       if (typeof value !== "number") {
         value = parseInt(value);
-        // return value;
       }
       var formatter = new Intl.NumberFormat("vi-VN", {
         style: "currency",
@@ -66,7 +65,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getSelectedGroup",]),
+    ...mapActions(["setSelectedGroup",]),
     imageGroup(name) {
       try {
         let img = "/group/" + name;
@@ -76,10 +75,10 @@ export default {
       }
     },
     detailGroup() {
-      this.getSelectedGroup(this.group._id);
-      this.$router.push({
-        name: "Group",
-      });
+      this.setSelectedGroup(this.group._id);
+      const id = this.group._id;
+      const path = `/group/${id}`
+      if (this.$route.path !== path) this.$router.push(path);
     },
   },
 }
@@ -88,20 +87,27 @@ export default {
 <style lang="postcss" scoped>
 .group-wrapper {
   @apply bg-white;
-  @apply w-min;
+  @apply w-72 sm:w-80;
+  transition: 0.3s;
+}
+
+.group-wrapper:hover {
+  transform: scale(1.1);
+  box-shadow: rgba(57, 42, 35, 0.08) 0px 4px 12px;
 }
 
 .group {
-  @apply flex flex-col gap-3;
+  @apply flex flex-col;
 }
 
 .group-image {
-  @apply w-56 h-56;
+  @apply w-64 h-64 sm:w-72 sm:h-72;
   @apply cursor-pointer;
+  @apply object-cover;
 }
 
 .group-spec {
-  @apply p-3;
+  @apply p-4;
   @apply flex flex-col gap-4;
 }
 
@@ -110,7 +116,7 @@ export default {
 }
 
 .group-calo-price {
-  @apply w-60;
+  @apply w-full;
   @apply flex flex-row justify-between;
 }
 
@@ -154,24 +160,13 @@ span.value {
   @apply text-sm font-medium tracking-wide;
 }
 
-.group-list-item-wrapper {
-  @apply p-2;
-  @apply overflow-x-auto;
-  @apply bg-gold-100;
-  @apply w-60;
-}
-
 .group-list-item {
   @apply flex flex-row gap-2;
 
   @apply p-2;
   @apply overflow-x-auto;
-  @apply bg-gold-100;
-  @apply w-60;
-}
-
-.group-list-item > div {
-  /* @apply flex-shrink-0; */
+  background-color: #FAF9F5;
+  @apply w-full;
 }
 
 *::-webkit-scrollbar {

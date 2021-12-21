@@ -1,3 +1,6 @@
+
+import UserAPI from "../../api/UserAPI";
+
 const state = {
   user_login: {},
   is_login: false,
@@ -9,11 +12,21 @@ const getters = {
 };
 
 const actions = {
+  check_username(username ) {
+    UserAPI.getUserByUsername(username)
+    .then((res) => {
+      return JSON.stringify(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      return "error";
+    });
+  },
   setUser({ commit }, userLogin) {
     commit("SET_USER", userLogin);
   },
-  logoutUser({ commit }, user) {
-    commit("LOG_OUT", user);
+  logoutUser({ commit }) {
+    commit("CLEAR_USER");
   },
 };
 
@@ -22,8 +35,8 @@ const mutations = {
     state.user_login = userLogin;
     state.is_login = true;
   },
-  LOG_OUT(state, user) {
-    state.user_login = user;
+  CLEAR_USER(state) {
+    state.user_login = {};
     state.is_login = false;
   },
 };
