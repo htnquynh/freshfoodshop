@@ -2,7 +2,7 @@ import CartAPI from "../../api/CartAPI";
 
 const state = {
   cart: {
-    user: '',
+    user: "",
     cartItems: [],
   },
   visibleMiniCart: false,
@@ -34,14 +34,14 @@ const actions = {
     };
 
     CartAPI.getUserCart(config)
-    .then((res) => {
-      if(res.data) {
-        commit("SET_CART", res.data);
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((res) => {
+        if (res.data) {
+          commit("SET_CART", res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
   async addItemToCart({ dispatch }, new_item) {
     // Get Token
@@ -54,35 +54,37 @@ const actions = {
     total_price = total_price.toString();
     console.log(total_price);
     let items = [];
-    items.push({product: new_item.id, quantity: new_item.quantity, price: total_price});
-    CartAPI.add(items, config)
+    items.push({
+      product: new_item.id,
+      quantity: new_item.quantity,
+      price: total_price,
+    });
+    await CartAPI.add(items, config)
       .then((res) => {
         console.log(res.data);
-        dispatch("getUserCart")
-        .then(() => {
+        dispatch("getUserCart").then(() => {
           return true;
-        })
+        });
       })
       .catch((error) => {
         console.log(error);
         return false;
       });
   },
-  async addAllToCart({ dispatch }, items ) {
+  async addAllToCart({ dispatch }, items) {
     let token = JSON.parse(sessionStorage.getItem("user_login"));
     let config = {
       headers: { Authorization: "bearer " + token },
     };
     items.forEach((item) => {
       item.price = (parseInt(item.price) * item.quantity).toString();
-    })
-    CartAPI.add(items, config)
+    });
+    await CartAPI.add(items, config)
       .then((res) => {
         console.log(res.data);
-        dispatch("getUserCart")
-        .then(() => {
+        dispatch("getUserCart").then(() => {
           return true;
-        })
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -95,8 +97,8 @@ const actions = {
       headers: { Authorization: "bearer " + token },
     };
 
-    CartAPI.removeByProductId(product_id, config)
-    .then((res) => {
+    await CartAPI.removeByProductId(product_id, config)
+      .then((res) => {
         console.log(res.data.message);
         dispatch("getUserCart");
       })
@@ -109,15 +111,17 @@ const actions = {
     let config = {
       headers: { Authorization: "bearer " + token },
     };
-    CartAPI.clear(config).then(() => {
-      commit("CLEAR_CART");
-    }).catch((error) => {
-      console.log(error);
-    });
+    await CartAPI.clear(config)
+      .then(() => {
+        commit("CLEAR_CART");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   logoutCart({ commit }) {
-    commit("SET_CART", { user: '',cartItems: [], });
-  }
+    commit("SET_CART", { user: "", cartItems: [] });
+  },
   // async removeByProductId({ commit, state }, product_id) {
   //   let token = JSON.parse(sessionStorage.getItem("user_login"));
   //   let config = {
@@ -134,7 +138,7 @@ const actions = {
   //     console.log(error);
   //   });
   // },
-  
+
   // async updateItemQuantity({ commit, state }, new_item) {
   //   let token = JSON.parse(sessionStorage.getItem("user_login"));
   //   let config = {

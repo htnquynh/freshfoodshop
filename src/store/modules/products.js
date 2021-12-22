@@ -21,39 +21,39 @@ const getters = {
 };
 
 function sortProductByDate(list) {
-  return list.sort(function(a,b){
+  return list.sort(function (a, b) {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 }
 
 const actions = {
   async getProducts({ commit }) {
-    ProductAPI.get()
-    .then((res) => {
-      let products = res.data;
-      products = sortProductByDate(products);
-      commit("SET_PRODUCTS", products);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    await ProductAPI.get()
+      .then((res) => {
+        let products = res.data.filter((item) => item.quantity_remaining > 0);
+        products = sortProductByDate(products);
+        commit("SET_PRODUCTS", products);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 
   async getCategory({ commit }) {
-    CategoryAPI.get()
-    .then((res) => {
-      commit("SET_CATEGORY", res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    await CategoryAPI.get()
+      .then((res) => {
+        commit("SET_CATEGORY", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 
   getSelectedProduct({ commit, state }, product_id) {
     const product = state.products.filter((p) => p._id == product_id)[0];
     commit("SET_SELECTED_PRODUCT", product);
   },
-  
+
   setKeyword({ commit, dispatch }, keyword) {
     commit("SET_KEYWORD", keyword);
     dispatch("getFilteredProduct");
@@ -93,7 +93,7 @@ const mutations = {
   SET_KEYWORD(state, keyword) {
     state.keyword = keyword;
   },
-  
+
   SET_COMPARE_PRODUCTS(state, product) {
     state.compareProducts.push(product);
   },

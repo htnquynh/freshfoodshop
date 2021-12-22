@@ -1,5 +1,5 @@
-import api from './api';
-const endpoint = '/cart';
+import api from "./api";
+const endpoint = "/cart";
 export default {
   getUserCart(config) {
     return api.get(`${endpoint}/user-cart`, config);
@@ -19,5 +19,5 @@ export default {
 
   clear(config) {
     return api.get(`${endpoint}/clear`, config);
-  }
-}
+  },
+};

@@ -1,10 +1,16 @@
 <template>
   <div class="home relative">
-    <TheHeader class="header-page"/>
-    <MiniCart/>
+    <TheHeader class="header-page" />
+    <MiniCart />
     <div class="hero">
-      <video playsinline autoplay muted loop poster="../assets/image/video-placeholder.jpg">
-        <source src="../assets/image/Welcome.mp4" type="video/mp4">
+      <video
+        playsinline
+        autoplay
+        muted
+        loop
+        poster="../assets/image/video-placeholder.jpg"
+      >
+        <source src="../assets/image/Welcome.mp4" type="video/mp4" />
       </video>
 
       <div class="hero-msg">
@@ -15,149 +21,168 @@
 
     <div class="page-content">
       <div class="section-service">
-        <TheService/>
+        <TheService />
       </div>
       <div class="section-featured-product">
         <div class="section-product">
           <div class="section-product-title">
-            <h2 class="section-title">
-              Trending Product.
-            </h2>
+            <h2 class="section-title">Trending Product.</h2>
             <router-link to="/shop">
               <a class="hover:text-gold-500">
                 Show All
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                  enable-background="new 0 0 24 24" 
-                  height="24px" 
-                  viewBox="0 0 24 24" 
-                  width="24px" fill="currentColor">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  enable-background="new 0 0 24 24"
+                  height="24px"
+                  viewBox="0 0 24 24"
+                  width="24px"
+                  fill="currentColor"
+                >
                   <rect fill="none" height="24" width="24" />
-                  <path d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z" />
-                </svg>
-              </a>
-            </router-link>
-          </div>
-            <div class="section-list-product">
-              <Product 
-                class="product" 
-                v-for="item in featured" 
-                :key='item._id' 
-                :product='item'/>
-            </div>
-        </div>
-      </div>
-
-      <div class="section-best-seller">
-
-        <div class="section-product">
-          <div class="section-product-title">
-            <h2 class="section-title">
-              Best Seller.
-            </h2>
-            <router-link to="/shop">
-              <a class="hover:text-gold-500">
-                Show All
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                  enable-background="new 0 0 24 24" 
-                  height="24px" 
-                  viewBox="0 0 24 24" 
-                  width="24px" fill="currentColor">
-                  <rect fill="none" height="24" width="24" />
-                  <path d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z" />
+                  <path
+                    d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z"
+                  />
                 </svg>
               </a>
             </router-link>
           </div>
           <div class="section-list-product">
-            <Product 
-              v-for="item in best_seller" 
-              :key='item._id' 
-              :product='item'/>
+            <Product
+              class="product"
+              v-for="item in featured"
+              :key="item._id"
+              :product="item"
+            />
           </div>
-        </div>
-
-        <div class="ads-banner">
-          <img src="../assets/image/Good food (3).gif">
         </div>
       </div>
 
       <div class="section-best-seller">
-
         <div class="section-product">
           <div class="section-product-title">
-            <h2 class="section-title">
-              New Arrival.
-            </h2>
+            <h2 class="section-title">Best Seller.</h2>
             <router-link to="/shop">
               <a class="hover:text-gold-500">
                 Show All
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                  enable-background="new 0 0 24 24" 
-                  height="24px" 
-                  viewBox="0 0 24 24" 
-                  width="24px" fill="currentColor">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  enable-background="new 0 0 24 24"
+                  height="24px"
+                  viewBox="0 0 24 24"
+                  width="24px"
+                  fill="currentColor"
+                >
                   <rect fill="none" height="24" width="24" />
-                  <path d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z" />
+                  <path
+                    d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z"
+                  />
                 </svg>
               </a>
             </router-link>
           </div>
-            <div class="section-list-product">
-              <Product v-for="item in new_arrival" :key='item._id' :product='item'/>
-            </div>
+          <div class="section-list-product">
+            <Product
+              v-for="item in best_seller"
+              :key="item._id"
+              :product="item"
+            />
+          </div>
         </div>
 
         <div class="ads-banner">
-          <img src="../assets/image/Good food (5).gif">
+          <img src="../assets/image/Good food (3).gif" />
+        </div>
+      </div>
+
+      <div class="section-best-seller">
+        <div class="section-product">
+          <div class="section-product-title">
+            <h2 class="section-title">New Arrival.</h2>
+            <router-link to="/shop">
+              <a class="hover:text-gold-500">
+                Show All
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  enable-background="new 0 0 24 24"
+                  height="24px"
+                  viewBox="0 0 24 24"
+                  width="24px"
+                  fill="currentColor"
+                >
+                  <rect fill="none" height="24" width="24" />
+                  <path
+                    d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z"
+                  />
+                </svg>
+              </a>
+            </router-link>
+          </div>
+          <div class="section-list-product">
+            <Product
+              v-for="item in new_arrival"
+              :key="item._id"
+              :product="item"
+            />
+          </div>
+        </div>
+
+        <div class="ads-banner">
+          <img src="../assets/image/Good food (5).gif" />
         </div>
       </div>
 
       <div class="section-recommend-menu">
         <div class="section-product">
           <div class="section-product-title">
-            <h2 class="section-title">
-              Recommend menu.
-            </h2>
+            <h2 class="section-title">Recommend menu.</h2>
             <router-link to="/shop">
               <a class="hover:text-gold-500">
                 Show All
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                  enable-background="new 0 0 24 24" 
-                  height="24px" 
-                  viewBox="0 0 24 24" 
-                  width="24px" fill="currentColor">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  enable-background="new 0 0 24 24"
+                  height="24px"
+                  viewBox="0 0 24 24"
+                  width="24px"
+                  fill="currentColor"
+                >
                   <rect fill="none" height="24" width="24" />
-                  <path d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z" />
+                  <path
+                    d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z"
+                  />
                 </svg>
               </a>
             </router-link>
           </div>
           <div class="section-list-product">
-            <Group v-for="item in groups.slice(0, 3)" :key='item._id' :group='item'/>
+            <Group
+              v-for="item in groups.slice(0, 3)"
+              :key="item._id"
+              :group="item"
+            />
           </div>
         </div>
       </div>
     </div>
 
     <div class="banner-full">
-      <img src="../assets/image/banner-13.png">
+      <img src="../assets/image/banner-13.png" />
     </div>
 
-    <TheSubscribe/>
-    <TheFooter/>
-
+    <TheSubscribe />
+    <TheFooter />
   </div>
 </template>
 
 <script>
-import TheHeader from '../components/TheHeader.vue';
-import TheFooter from '../components/TheFooter.vue';
-import TheSubscribe from '../components/TheSubscribe.vue';
-import MiniCart from '../components/MiniCart.vue';
+import TheHeader from "../components/TheHeader.vue";
+import TheFooter from "../components/TheFooter.vue";
+import TheSubscribe from "../components/TheSubscribe.vue";
+import MiniCart from "../components/MiniCart.vue";
 
-import Product from '../components/Product.vue'
-import Group from '../components/Group.vue'
-import TheService from '../components/TheService.vue'
+import Product from "../components/Product.vue";
+import Group from "../components/Group.vue";
+import TheService from "../components/TheService.vue";
 
 import { mapActions, mapGetters } from "vuex";
 
@@ -176,15 +201,16 @@ export default {
       featured: [],
       best_seller: [],
       new_arrival: [],
-    }
+    };
   },
   async created() {
-    this.getProducts();
+    this.getProducts().then((res) => {
+      console.log(res);
+      this.featured = this.products.slice(0, 8);
+      this.best_seller = this.sortProductBySold(this.products).slice(0, 2);
+      this.new_arrival = this.featured.slice(0, 2);
+    });
     this.getGroups();
-
-    this.featured = this.products.slice(0, 8);
-    this.best_seller = this.sortProductBySold(this.products).slice(0, 2);
-    this.new_arrival = this.featured.slice(0, 2);
   },
   computed: {
     ...mapGetters(["products", "groups"]),
@@ -192,17 +218,17 @@ export default {
   methods: {
     ...mapActions(["getProducts", "getGroups"]),
     sortProductBySold(list) {
-      return list.sort(function(a,b) {
+      return list.sort(function (a, b) {
         return b.quantity_sold - a.quantity_sold;
       });
     },
     sortProductByDate(list) {
-      return list.sort(function(a,b){
+      return list.sort(function (a, b) {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="postcss" scoped>
@@ -296,14 +322,14 @@ export default {
 
 .section-best-seller .ads-banner {
   /* @apply w-72; */
-  @apply  w-full;
+  @apply w-full;
   @apply max-h-80 lg:max-h-full;
   /* @apply flex-shrink-0; */
 }
 
 .section-best-seller .ads-banner img {
   /* @apply w-72; */
-  @apply  w-full;
+  @apply w-full;
   @apply h-full;
   @apply object-cover object-center;
   /* @apply flex-shrink-0; */
@@ -315,7 +341,6 @@ export default {
   @apply flex flex-col items-end gap-8;
   /* @apply py-4; */
 }
-
 
 /* .section-best-seller .section-product .section-product-title h2.section-title {
   @apply font-extrabold text-lg md:text-3xl;
@@ -335,7 +360,6 @@ export default {
 .section-product-title a {
   @apply w-max flex-shrink-0;
   @apply flex flex-row items-center gap-2;
-
 }
 
 .section-product-title a svg {
