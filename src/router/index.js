@@ -25,17 +25,12 @@ const ChangePassword = () => import('../views/ChangePassword.vue')
 
 const Wishlist = () => import('../views/Wishlist.vue')
 const Compare = () => import('../views/Compare.vue')
-
-// const Loading = () => import('../components/Loading.vue')
+const PageNotFound = () => import('../views/PageNotFound.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/loading',
-  //   name: 'Loading',
-  //   component: Loading
-  // },
+  { path: "*", name: "PageNotFound", component: PageNotFound },
   {
     path: '/',
     name: 'Home',

@@ -26,12 +26,12 @@
     </div>
 
     <a v-if="order.status == 'Pending'"
-        @click="cancelOrder()" class="order-action">
+        @click="updateOrderStatus('RCancel')" class="order-action">
         Cancel
     </a>
 
     <a v-if="order.status == 'Delivering'"
-        @click="received()" class="order-action">
+        @click="updateOrderStatus('Received')" class="order-action">
         Received
     </a>
   </div>
@@ -39,7 +39,7 @@
 
 <script>
 import OrderItem from './OrderItem.vue';
-// import axios from "axios";
+import OrderAPI from "../api/OrderAPI";
 import { mapActions } from "vuex";
 
 export default {
@@ -53,7 +53,7 @@ export default {
   computed: {},
   filters: {
     toCODE: function (value) {
-      return "#O" + value.substring(0, 5);
+      return "#O" + value.slice(-5);
     },
     toVND: function (value) {
       if (typeof value !== "number") {
@@ -82,7 +82,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["updateOrderStatus"]),
+    ...mapActions(["getOrders", "start_load", "stop_load"]),
     imageProduct(name) {
       try {
         let img = "/products/" + name;
@@ -91,11 +91,34 @@ export default {
         console.log(error);
       }
     },
-    cancelOrder() {
-      this.updateOrderStatus({ order_id: this.order._id, status: "Cancel" });
-    },
-    received() {
-      this.updateOrderStatus({ order_id: this.order._id, status: "Received" });
+    async updateOrderStatus(status) {
+      this.start_load();
+      let token = JSON.parse(sessionStorage.getItem("user_login"));
+      let config = {
+        headers: { Authorization: "bearer " + token },
+      };
+
+      await OrderAPI.updateStatus(this.order._id, status, config)
+      .then((res) => {
+        console.log(res);
+        this.$swal.fire(
+          'Success!',
+          `You have successfully ${status} order`,
+          'success'
+        )
+        this.getOrders().then(() => {
+          this.stop_load();
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.stop_load();
+        this.$swal.fire(
+          'Oh no!',
+          'Something went wrong. Double check your work.',
+          'fail'
+        );
+      });
     },
   },
 };

@@ -12,9 +12,6 @@ export default {
   props: {
     isLoading: Boolean,
   },
-  created() {
-    console.log(this.isLoading);
-  }
 }
 </script>
 

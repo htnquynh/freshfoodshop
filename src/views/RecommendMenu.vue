@@ -17,7 +17,7 @@
                 <path d="M0 0h24v24H0V0z" fill="none" />
                 <path d="M15.5 14h-.79l-.28-.27c1.2-1.4 1.82-3.31 1.48-5.34-.47-2.78-2.79-5-5.59-5.34-4.23-.52-7.79 3.04-7.27 7.27.34 2.8 2.56 5.12 5.34 5.59 2.03.34 3.94-.28 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
               </svg>
-              <input type="search" v-model="searchMenu" placeholder="Search ...">
+              <input type="search" v-model="keyword" v-on:keyup.enter="searchMenu()" placeholder="Search ...">
             </div>
             <div class="select-box">
               <svg 
@@ -113,7 +113,8 @@ export default {
   },
   data() {
     return {
-      searchMenu: '',
+      keyword: '',
+      recommend_menu: [],
       selectedSort: 'newest',
       page: 1,
       perPage: 6,
@@ -121,7 +122,13 @@ export default {
     };
   },
   created() {
-    this.getGroups();
+    this.start_load();
+    this.getGroups()
+    .then(() => {
+      console.log("Fetch Group");
+      this.recommend_menu = this.groups;
+      this.stop_load();
+    });
   },
   computed: {
     ...mapGetters(["groups"]),
@@ -129,65 +136,74 @@ export default {
       return Math.ceil(this.resultCount / this.itemsPerPage);
     },
     displayedGroups() {
-      return this.paginate(this.groups);
-    },
-  },
-  filters: {
-    toVND: function(value) {
-      if (typeof value !== "number") {
-        value = parseInt(value);
-        // return value;
-      }
-      var formatter = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-        minimumFractionDigits: 0,
-      });
-      return formatter.format(value);
+      return this.paginate(this.recommend_menu);
     },
   },
   watch: {
-    groups() {
+    recommend_menu() {
       this.setPages();
     },
     perPage() {
       this.setPages();
     },
   },
-  
   methods: {
-    ...mapActions(["getGroups"]),
-    // sendKeyword(e) {
-    //   if(e.key === "Enter"){
-    //     this.setKeyword(this.search);
-    //     if (this.$router.currentRoute.path != "/shop") {
-    //       this.$router.push("/shop");
-    //     }
-    //   }
-    // },
+    ...mapActions(["getGroups", "start_load", "stop_load"]),
+    fetchGroup() {
+      this.getGroups()
+      .then(() => {
+        console.log("Fetch Group");
+        this.recommend_menu = this.groups;
+      });
+    },
+    searchMenu() {
+      console.log(this.keyword);
+      this.recommend_menu = this.groups.filter((g) => {
+        if (g.title.toLowerCase().includes(this.keyword.toLowerCase())) {
+          return true;
+        }
+        return this.checkIngredient(g.material);
+      });
+    },
+    checkIngredient(list) {
+      let has_keyword = false;
+      list.every((item) => {
+        console.log(item.product.name.toLowerCase());
+        if (item.product.name.toLowerCase().includes(this.keyword.toLowerCase())) {
+          has_keyword = true;
+          console.log('Has Keyword !!!');
+          // Stop
+          return false;
+        }
+        // Continue
+        return true;
+      })
+
+      return has_keyword;
+    },
     changePerPage() {
       console.log("Per Page: " + this.perPage);
       this.setPages();
     },
     canPagination() {
-      if (this.groups.length / this.perPage <= 1) {
+      if (this.recommend_menu.length / this.perPage <= 1) {
         return false;
       }
       return true;
     },
     setPages() {
-      let numberOfPages = Math.ceil(this.groups.length / this.perPage);
+      let numberOfPages = Math.ceil(this.recommend_menu.length / this.perPage);
       this.pages = [];
       for (let index = 1; index <= numberOfPages; index++) {
         this.pages.push({ id: index - 1, page: index });
       }
     },
-    paginate(groups) {
+    paginate(list) {
       let page = this.page;
       let perPage = this.perPage;
       let from = page * perPage - perPage;
       let to = page * perPage;
-      return groups.slice(from, to);
+      return list.slice(from, to);
     },
   },
 };

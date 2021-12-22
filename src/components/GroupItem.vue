@@ -85,7 +85,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getUserCart", "addItemToWishlist", "addItemsToWishlist"]),
+    ...mapActions(["getUserCart", "addItemToWishlist", "addItemsToWishlist", "start_load", "stop_load"]),
     imageProduct(name) {
         try {
             let img = "/products/" + name;
@@ -94,17 +94,18 @@ export default {
             console.log(error);
         }
     },
-
     async addItemToCart() {
       if (this.is_login) {
+        this.start_load();
         let token = JSON.parse(sessionStorage.getItem("user_login"));
         let config = {
           headers: { Authorization: "bearer " + token },
         };
         let items = [{product: this.product._id, quantity: 1, price: this.product.price}];
-        CartAPI.add(items, config)
+        await CartAPI.add(items, config)
         .then((res) => {
           console.log(res.data);
+          this.stop_load();
           this.$swal.fire(
             'Oh great!',
             'Add product to cart successfully!',
@@ -114,6 +115,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.stop_load();
           this.$swal.fire(
             'Oh no!',
             'Something went wrong. Double check your work.',
@@ -121,6 +123,7 @@ export default {
           );
         });
       } else {
+        this.stop_load();
         this.$swal.fire(
           'Login to your account',
           'You must be logged in to be able to add products to your cart.',
@@ -142,8 +145,10 @@ export default {
         );
         return;
       }
+      this.start_load();
       await this.addItemToWishlist(product).then((res) => {
         console.log(res);
+        this.stop_load();
         this.addItemsToWishlist();
         this.$swal.fire(
           'Great!',

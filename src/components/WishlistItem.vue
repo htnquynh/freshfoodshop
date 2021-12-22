@@ -80,7 +80,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getUserCart", "deleteWishlistItem", "addItemsToWishlist"]),
+    ...mapActions(["getUserCart", "deleteWishlistItem", "addItemsToWishlist", "start_load", "stop_load"]),
     imageProduct(name) {
       try {
           let img = "/products/" + name;
@@ -90,9 +90,11 @@ export default {
       }
     },
     async deleteItem(product_id) {
+      this.start_load();
       await this.deleteWishlistItem(product_id)
       .then((res) => {
         console.log(res);
+        this.stop_load();
         this.$swal.fire(
           'Success!',
           'The product has been removed from wishlist.',
@@ -102,12 +104,13 @@ export default {
     },
     async addItemToCart() {
       if (this.is_login) {
+        this.start_load();
         let token = JSON.parse(sessionStorage.getItem("user_login"));
         let config = {
           headers: { Authorization: "bearer " + token },
         };
         let items = [{product: this.product._id, quantity: 1, price: this.product.price}];
-        CartAPI.add(items, config)
+        await CartAPI.add(items, config)
         .then((res) => {
           console.log(res.data);
           this.$swal.fire(
@@ -115,7 +118,9 @@ export default {
             'Add product to cart successfully!',
             'success'
           );
-          this.getUserCart();
+          this.getUserCart().then(() => {
+            this.stop_load();
+          });
         })
         .catch((error) => {
           console.log(error);

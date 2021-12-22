@@ -12,8 +12,8 @@ const getters = {
 };
 
 const actions = {
-  check_username(username ) {
-    UserAPI.getUserByUsername(username)
+  async check_username(username ) {
+    await UserAPI.getUserByUsername(username)
     .then((res) => {
       return JSON.stringify(res.data);
     })

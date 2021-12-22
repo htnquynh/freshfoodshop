@@ -110,24 +110,18 @@ export default {
     },
   },
   created() {
-    // if(this.is_login) {
-    //   this.getUserCart();
-    // }
-  },
-  mounted() {
     if(this.is_login) {
-      this.getUserCart();
+      this.start_load();
+      this.getUserCart().then(() => {
+        this.stop_load();
+      });
     }
   },
   computed: {
     ...mapGetters(["is_login", "visibleMiniCart", "cart", "totalPrice", "noItems"]),
   },
   methods: {
-    ...mapActions(["getUserCart", "removeCartItem", "setVisibleMiniCart", "getSelectedProduct"]),
-    close() {
-      this.$emit('close', false);
-      console.log(this.open);
-    },
+    ...mapActions(["getUserCart", "removeCartItem", "setVisibleMiniCart", "getSelectedProduct",  "start_load", "stop_load"]),
     toggleMiniCart() {
       this.setVisibleMiniCart();
     },
@@ -143,13 +137,6 @@ export default {
         );
         return;
       }
-    },
-    goDetail(product_id) {
-      this.getSelectedProduct(product_id);
-      this.setVisibleMiniCart();
-      this.$router.push({
-        name: "Product",
-      });
     },
   }
 }

@@ -18,7 +18,7 @@ function sortGroupByDate(list) {
 
 const actions = {
   async getGroups({ commit }) {
-    GroupAPI.get()
+    await GroupAPI.get()
       .then((res) => {
         let groups = res.data;
         groups = sortGroupByDate(groups);

@@ -153,7 +153,7 @@ export default {
   created() {
   },
   methods: {
-    ...mapActions(["deleteCompareProduct", "getUserCart"]),
+    ...mapActions(["deleteCompareProduct", "getUserCart", "start_load", "stop_load"]),
     imageProduct(name) {
       try {
         let img = "/products/" + name;
@@ -164,20 +164,23 @@ export default {
     },
     async addItemToCart(product) {
       if (this.is_login) {
+        this.start_load();
         let token = JSON.parse(sessionStorage.getItem("user_login"));
         let config = {
           headers: { Authorization: "bearer " + token },
         };
         let items = [{product: product._id, quantity: 1, price: product.price}];
-        CartAPI.add(items, config)
+        await CartAPI.add(items, config)
         .then((res) => {
           console.log(res.data);
-          this.$swal.fire(
-            'Oh great!',
-            'Add product to cart successfully!',
-            'success'
-          );
-          this.getUserCart();
+          this.getUserCart().then(() => {
+            this.stop_load();
+            this.$swal.fire(
+              'Oh great!',
+              'Add product to cart successfully!',
+              'success'
+            );
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -205,12 +208,15 @@ export default {
         confirmButtonText: 'Remove',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.deleteCompareProduct(product_id);
-          this.$swal.fire(
-            'Done!',
-            'Remove Successfully!',
-            'success'
-          )
+          this.start_load();
+          this.deleteCompareProduct(product_id).then(() => {
+            this.stop_load();
+            this.$swal.fire(
+              'Done!',
+              'Remove Successfully!',
+              'success'
+            )
+          });
         } 
       })
     },

@@ -39,31 +39,33 @@ export default {
   created() {
   },
   computed: {
-    ...mapGetters(["userLogin"]),
+    ...mapGetters(["userLogin", "start_load", "stop_load"]),
   },
   methods: {
     async changePassword() {
       if (this.password == "" || this.new_password == "" || this.retype_new_password == "") {
         this.$swal.fire(
-            'Uh oh!',
-            'Please complete all information.',
-            'error'
-          );
+          'Uh oh!',
+          'Please complete all information.',
+          'error'
+        );
         return;
       }
 
       if (this.new_password !== this.retype_new_password) {
         this.$swal.fire(
-            'Uh oh!',
-            'Confirm password does not match.',
-            'error'
-          );
+          'Uh oh!',
+          'Confirm password does not match.',
+          'error'
+        );
         return;
       }
 
-      UserAPI.changePassword(this.userLogin._id, this.password, this.new_password)
+      this.start_load();
+      await UserAPI.changePassword(this.userLogin._id, this.password, this.new_password)
         .then((res) => {
           console.log(res.data.message);
+          this.stop_load();
           this.$swal.fire(
             'Success!',
             'You have successfully updated your password',
@@ -71,6 +73,7 @@ export default {
           );
         })
         .catch((err) => {
+          this.stop_load();
           this.$swal.fire(
             'Uh oh!',
             'Something went wrong. Double check your work.',
@@ -79,7 +82,6 @@ export default {
           console.log(err.message);
         });
     },
-
   },
 };
 </script>

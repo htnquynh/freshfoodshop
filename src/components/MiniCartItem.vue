@@ -1,7 +1,7 @@
 <template>
   <div class="group-item-wrapper">
     <div class="group-item">
-      <img class="group-item-image" @click="goDetail(item.product._id)" :src="imageProduct(item.product.image)" >
+      <img class="group-item-image" :src="imageProduct(item.product.image)" >
       <div class="group-item-spec">
         <div class="product-spec">
           <p class="product-category">{{ item.product.category }}</p>
@@ -96,7 +96,6 @@ export default {
     toVND: function(value) {
       if (typeof value !== "number") {
         value = parseInt(value);
-        // return value;
       }
       var formatter = new Intl.NumberFormat("vi-VN", {
         style: "currency",
@@ -107,51 +106,48 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["addItemToCart", "removeByProductId", "getSelectedProduct"]),
+    ...mapActions(["addItemToCart", "removeByProductId", "getSelectedProduct", "start_load", "stop_load"]),
     imageProduct(name) {
-        try {
-            let img = "/products/" + name;
-            return img;
-        } catch (error) {
-            console.log(error);
-        }
-    },
-    goDetail(product_id) {
-        this.getSelectedProduct(product_id);
-        this.$router.push({
-            name: "Product",
-        });
+      try {
+        let img = "/products/" + name;
+        return img;
+      } catch (error) {
+        console.log(error);
+      }
     },
     updateQuantity() {
-        if (this.new_quantity < 1 ) {
-            this.new_quantity = this.item.quantity;
-        } else if (this.item.product.quantity_remaining < this.new_quantity) {
-            this.$swal.fire(
-              'Warning!',
-              'This product is out of stock!',
-              'warning'
-            )
-            this.new_quantity = this.item.quantity;
-        } else {
-          let new_item = {
-            'id': this.item.product._id, 
-            'quantity': parseInt(this.new_quantity), 
-            'price': this.item.product.price
-            }
-          this.addItemToCart(new_item);
-        }
+      if (this.new_quantity < 1 ) {
+        this.new_quantity = this.item.quantity;
+      } else if (this.item.product.quantity_remaining < this.new_quantity) {
+        this.$swal.fire(
+          'Warning!',
+          'This product is out of stock!',
+          'warning'
+        )
+        this.new_quantity = this.item.quantity;
+      } else {
+        this.start_load();
+        let new_item = {
+          'id': this.item.product._id, 
+          'quantity': parseInt(this.new_quantity), 
+          'price': this.item.product.price
+          }
+        this.addItemToCart(new_item).then(() => {
+          this.stop_load();
+        });
+      }
     },
     minusQuantity() {
-        if (this.new_quantity > 1) {
-            this.new_quantity --;
-            this.updateQuantity();
-        }
+      if (this.new_quantity > 1) {
+        this.new_quantity --;
+        this.updateQuantity();
+      }
     },
     plusQuantity() {
-        if (this.new_quantity < this.item.product.quantity_remaining) {
-            this.new_quantity ++;
-            this.updateQuantity();
-        }
+      if (this.new_quantity < this.item.product.quantity_remaining) {
+        this.new_quantity ++;
+        this.updateQuantity();
+      }
     }
   },
 }

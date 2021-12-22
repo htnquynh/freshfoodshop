@@ -16,9 +16,8 @@ const actions = {
       headers: { Authorization: "bearer " + token },
     };
 
-    WishlistAPI.get(config)
+    await WishlistAPI.get(config)
     .then((res) => {
-
       if(res.data.items) {
         commit("SET_WISHLIST", res.data.items);
       }
@@ -40,7 +39,7 @@ const actions = {
     };
     let items = state.wishlist_items.map((product) => product._id);
 
-    WishlistAPI.add(items, config)
+    await WishlistAPI.add(items, config)
     .then((res) => {
       console.log(res);
       dispatch("getWishlist");

@@ -118,7 +118,7 @@
             <h2 class="section-title">
               Recommend menu.
             </h2>
-            <router-link to="/shop">
+            <router-link to="/recommend-menu">
               <a class="hover:text-gold-500">
                 Show All
                 <svg xmlns="http://www.w3.org/2000/svg" 

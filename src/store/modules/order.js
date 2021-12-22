@@ -32,7 +32,7 @@ const actions = {
     let config = {
       headers: { Authorization: "bearer " + token },
     };
-    OrderAPI.getUserOrder(config)
+    await OrderAPI.getUserOrder(config)
     .then((res) => {
       let orders = res.data;
       orders = sortOrderByDate(orders);
@@ -49,7 +49,7 @@ const actions = {
       headers: { Authorization: "bearer " + token },
     };
 
-    OrderAPI.updateStatus(order_id, status, config)
+    await OrderAPI.updateStatus(order_id, status, config)
     .then((res) => {
       console.log(res);
       dispatch("getOrders");

@@ -1,7 +1,7 @@
 <template>
   <div class="group-item-wrapper">
     <div class="group-item">
-      <img class="group-item-image" @click="goDetail(item.product._id)" :src="imageProduct(item.product.image)" >
+      <img class="group-item-image"  :src="imageProduct(item.product.image)" >
       <div class="group-item-spec">
         <div class="product-spec">
           <p class="product-category">{{ item.product.category }}</p>
@@ -109,7 +109,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["addItemToCart", "removeByProductId", "getSelectedProduct"]),
+    ...mapActions(["addItemToCart", "removeByProductId", "getSelectedProduct", "start_load", "stop_load"]),
     imageProduct(name) {
         try {
             let img = "/products/" + name;
@@ -117,12 +117,6 @@ export default {
         } catch (error) {
             console.log(error);
         }
-    },
-    goDetail(product_id) {
-        this.getSelectedProduct(product_id);
-        this.$router.push({
-            name: "Product",
-        });
     },
     updateQuantity() {
       if (this.new_quantity < 1 ) {
@@ -135,12 +129,15 @@ export default {
           )
           this.new_quantity = this.item.quantity;
       } else {
+        this.start_load();
         let new_item = {
           'id': this.item.product._id, 
           'quantity': parseInt(this.new_quantity), 
           'price': this.item.product.price
           }
-        this.addItemToCart(new_item);
+        this.addItemToCart(new_item).then(() => {
+          this.stop_load();
+        });
       }
     },
     minusQuantity() {

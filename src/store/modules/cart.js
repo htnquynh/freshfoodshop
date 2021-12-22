@@ -33,7 +33,7 @@ const actions = {
       headers: { Authorization: "bearer " + token },
     };
 
-    CartAPI.getUserCart(config)
+    await CartAPI.getUserCart(config)
     .then((res) => {
       if(res.data) {
         commit("SET_CART", res.data);
@@ -55,7 +55,7 @@ const actions = {
     console.log(total_price);
     let items = [];
     items.push({product: new_item.id, quantity: new_item.quantity, price: total_price});
-    CartAPI.add(items, config)
+    await CartAPI.add(items, config)
       .then((res) => {
         console.log(res.data);
         dispatch("getUserCart")
@@ -76,7 +76,7 @@ const actions = {
     items.forEach((item) => {
       item.price = (parseInt(item.price) * item.quantity).toString();
     })
-    CartAPI.add(items, config)
+    await CartAPI.add(items, config)
       .then((res) => {
         console.log(res.data);
         dispatch("getUserCart")
@@ -95,7 +95,7 @@ const actions = {
       headers: { Authorization: "bearer " + token },
     };
 
-    CartAPI.removeByProductId(product_id, config)
+    await CartAPI.removeByProductId(product_id, config)
     .then((res) => {
         console.log(res.data.message);
         dispatch("getUserCart");
@@ -109,7 +109,7 @@ const actions = {
     let config = {
       headers: { Authorization: "bearer " + token },
     };
-    CartAPI.clear(config).then(() => {
+    await CartAPI.clear(config).then(() => {
       commit("CLEAR_CART");
     }).catch((error) => {
       console.log(error);
@@ -118,43 +118,6 @@ const actions = {
   logoutCart({ commit }) {
     commit("SET_CART", { user: '',cartItems: [], });
   }
-  // async removeByProductId({ commit, state }, product_id) {
-  //   let token = JSON.parse(sessionStorage.getItem("user_login"));
-  //   let config = {
-  //     headers: { Authorization: "bearer " + token },
-  //   };
-
-  //   let new_cart_items = state.cart.cartItems.filter((item) => item.product._id != product_id);
-  //   let new_cart = state.cart;
-  //   new_cart.cartItems = new_cart_items;
-
-  //   CartAPI.update(new_cart, config).then(() => {
-  //     commit("SET_CART", new_cart);
-  //   }).catch((error) => {
-  //     console.log(error);
-  //   });
-  // },
-  
-  // async updateItemQuantity({ commit, state }, new_item) {
-  //   let token = JSON.parse(sessionStorage.getItem("user_login"));
-  //   let config = {
-  //     headers: { Authorization: "bearer " + token },
-  //   };
-
-  //   let total_price = parseInt(new_item.price) * new_item.quantity;
-  //   total_price = total_price.toString();
-  //   console.log(total_price);
-
-  //   let index = state.cart.cartItems.findIndex((item) => item.product._id == new_item.id);
-  //   let new_cart = state.cart;
-  //   new_cart.cartItems[index] = {product: new_item.id, quantity: new_item.quantity, price: total_price};
-
-  //   CartAPI.update(new_cart, config).then(() => {
-  //     commit("SET_CART", new_cart);
-  //   }).catch((error) => {
-  //     console.log(error);
-  //   });
-  // },
 };
 
 const mutations = {

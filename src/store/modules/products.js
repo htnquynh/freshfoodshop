@@ -28,7 +28,7 @@ function sortProductByDate(list) {
 
 const actions = {
   async getProducts({ commit }) {
-    ProductAPI.get()
+    await ProductAPI.get()
     .then((res) => {
       let products = res.data;
       products = sortProductByDate(products);
@@ -40,7 +40,7 @@ const actions = {
   },
 
   async getCategory({ commit }) {
-    CategoryAPI.get()
+    await CategoryAPI.get()
     .then((res) => {
       commit("SET_CATEGORY", res.data);
     })

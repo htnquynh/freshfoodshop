@@ -76,48 +76,29 @@ export default {
       password: "",
     };
   },
-  created() {
-  },
-  computed: {
-  },
-  filters: {
-    toVND: function(value) {
-      if (typeof value !== "number") {
-        value = parseInt(value);
-        // return value;
-      }
-      var formatter = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-        minimumFractionDigits: 0,
-      });
-      return formatter.format(value);
-    },
-  },
-  watch: {
-    check() {
-      console.log(this.check);
-    }
-  },
   methods: {
-    ...mapActions(["getUserCart", "getWishlist", "setUser"]),
-    login(username, password) {
-      UserAPI.login(username, password)
+    ...mapActions(["getUserCart", "getWishlist", "setUser", "start_load", "stop_load"]),
+    async login(username, password) {
+      this.start_load();
+      await UserAPI.login(username, password)
         .then((res) => {
           let user_login = JSON.stringify(res.data.accessToken);
           sessionStorage.setItem("user_login", user_login);
-          this.setUser(res.data.user);
-          this.getUserCart();
-          this.getWishlist();
-          this.$router.push("/");
-          this.$swal.fire(
-            'Welcome!',
-            'You have successfully logged in.',
-            'success'
-          );
+          this.setUser(res.data.user).then(() => {
+            this.getUserCart();
+            this.getWishlist();
+            this.stop_load();
+            this.$router.push("/");
+            this.$swal.fire(
+              'Welcome!',
+              'You have successfully logged in.',
+              'success'
+            );
+          });
         })
         .catch((err) => {
           console.log(err.message);
+          this.stop_load();
           this.$swal.fire(
             'Uh oh!',
             'You have failed to login.',
@@ -128,7 +109,6 @@ export default {
     async submitForm() {
       if(this.username == '') {
         console.log("Username Empty");
-
         this.$swal.fire(
           'Oops...',
           'Please enter your Username!',

@@ -150,12 +150,15 @@ export default {
     this.getOrderInfo();
   },
   methods: {
-    ...mapActions(["getUserCart", "clearCart"]),
+    ...mapActions(["getUserCart", "clearCart", "start_load", "stop_load"]),
     getOrderInfo() {
+      this.start_load();
       this.full_name = this.userLogin.full_name;
       this.address = this.userLogin.address;
       this.phone = this.userLogin.phone;
-      this.getUserCart();
+      this.getUserCart().then(() => {
+        this.stop_load();
+      });
     },
     hasEmpty() {
       if(this.full_name == '' 
@@ -166,7 +169,6 @@ export default {
       return false;
     },
     async placeOrder() {
-
       if (this.hasEmpty()) {
         this.$swal.fire(
           'Uh oh!',
@@ -176,6 +178,7 @@ export default {
         return;
       }
 
+      this.start_load();
       let orderItems = [];
       for (let item of this.cart.cartItems) {
         orderItems.push({
@@ -198,8 +201,9 @@ export default {
       };
 
       console.log(order);
-      OrderAPI.create(order, config)
+      await OrderAPI.create(order, config)
       .then(() => {
+        this.stop_load();
         this.$swal.fire(
           'Oh great!',
           'Your order has been successfully placed.',
@@ -209,6 +213,7 @@ export default {
         this.$router.push("/shop");
       })
       .catch((err) => {
+        this.stop_load();
         console.log(err);
         this.$swal.fire(
           'Oh no!',

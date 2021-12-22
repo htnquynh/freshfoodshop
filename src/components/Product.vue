@@ -73,6 +73,8 @@ export default {
   },
   methods: {
     ...mapActions([
+      "start_load",
+      "stop_load",
       "getSelectedProduct",
       "getCompareProducts",
       
@@ -125,23 +127,27 @@ export default {
 
     async addItemToCart() {
       if (this.is_login) {
+        this.start_load();
         let token = JSON.parse(sessionStorage.getItem("user_login"));
         let config = {
           headers: { Authorization: "bearer " + token },
         };
         let items = [{product: this.product._id, quantity: 1, price: this.product.price}];
-        CartAPI.add(items, config)
+        await CartAPI.add(items, config)
         .then((res) => {
           console.log(res.data);
-          this.$swal.fire(
-            'Oh great!',
-            'Add product to cart successfully!',
-            'success'
-          );
-          this.getUserCart();
+          this.getUserCart().then(() => {
+            this.stop_load();
+            this.$swal.fire(
+              'Oh great!',
+              'Add product to cart successfully!',
+              'success'
+            );
+          });
         })
         .catch((error) => {
           console.log(error);
+          this.stop_load();
           this.$swal.fire(
             'Oh no!',
             'Something went wrong. Double check your work.',
@@ -170,9 +176,12 @@ export default {
         );
         return;
       }
+      this.start_load();
       await this.addItemToWishlist(product).then((res) => {
         console.log(res);
-        this.addItemsToWishlist();
+        this.addItemsToWishlist().then(() => {
+          this.stop_load();
+        });
         this.$swal.fire(
           'Great!',
           'Added product to wishlist successfully!',

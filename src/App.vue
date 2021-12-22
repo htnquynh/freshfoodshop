@@ -6,7 +6,7 @@
 </template>
 <script>
 import LoadScreen from "./components/LoadScreen.vue"
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   components: {
     LoadScreen
@@ -16,14 +16,10 @@ export default {
     }
   },
   created() {
-    // this.start_load();
     console.log("In App.vue: " + this.isLoading);
   },
   computed: {
     ...mapGetters(['isLoading']),
-  },
-  methods: {
-    ...mapActions(['start_load']),
   },
 }
 </script>
