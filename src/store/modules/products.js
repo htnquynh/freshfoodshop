@@ -21,7 +21,7 @@ const getters = {
 };
 
 function sortProductByDate(list) {
-  return list.sort(function(a,b){
+  return list.sort(function (a, b) {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 }
@@ -29,14 +29,14 @@ function sortProductByDate(list) {
 const actions = {
   async getProducts({ commit }) {
     await ProductAPI.get()
-    .then((res) => {
-      let products = res.data;
-      products = sortProductByDate(products);
-      commit("SET_PRODUCTS", products);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((res) => {
+        let products = res.data.filter((item) => item.quantity_remaining > 0);
+        products = sortProductByDate(products);
+        commit("SET_PRODUCTS", products);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 
   async getCategory({ commit }) {
@@ -53,7 +53,7 @@ const actions = {
     const product = state.products.filter((p) => p._id == product_id)[0];
     commit("SET_SELECTED_PRODUCT", product);
   },
-  
+
   setKeyword({ commit, dispatch }, keyword) {
     commit("SET_KEYWORD", keyword);
     dispatch("getFilteredProduct");
@@ -93,7 +93,7 @@ const mutations = {
   SET_KEYWORD(state, keyword) {
     state.keyword = keyword;
   },
-  
+
   SET_COMPARE_PRODUCTS(state, product) {
     state.compareProducts.push(product);
   },

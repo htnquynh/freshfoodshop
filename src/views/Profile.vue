@@ -1,6 +1,6 @@
 <template>
   <div class="my-account-wrapper">
-    <div class="account-summary-wrapper account-col">          
+    <div class="account-summary-wrapper account-col">
       <div class="account-summary">
         <div class="my-avatar">
           <img
@@ -23,12 +23,21 @@
           />
 
           <label class="input-avatar">
-            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              enable-background="new 0 0 24 24"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="currentColor"
+            >
               <g>
                 <rect fill="none" height="24" width="24" />
               </g>
               <g>
-                <path d="M18,15v3H6v-3H4v3c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2v-3H18z M7,9l1.41,1.41L11,7.83V16h2V7.83l2.59,2.58L17,9l-5-5L7,9z" />
+                <path
+                  d="M18,15v3H6v-3H4v3c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2v-3H18z M7,9l1.41,1.41L11,7.83V16h2V7.83l2.59,2.58L17,9l-5-5L7,9z"
+                />
               </g>
             </svg>
 
@@ -57,30 +66,29 @@
         </div>
       </div>
     </div>
-    
+
     <div class="my-account account-col">
       <div class="account-info">
-
         <h3 class="account-title">My Information</h3>
 
         <div class="input-text">
           <label for="">Fullname</label>
-          <input type="text" v-model="full_name">
+          <input type="text" v-model="full_name" />
         </div>
 
         <div class="input-text">
           <label for="">Address</label>
-          <input type="text" v-model="address">
+          <input type="text" v-model="address" />
         </div>
 
         <div class="input-text">
           <label for="">Phone</label>
-          <input type="text" v-model="phone">
+          <input type="text" v-model="phone" />
         </div>
 
         <div class="input-text">
           <label for="">Birthdate</label>
-          <input type="text" v-model="birthdate">
+          <input type="text" v-model="birthdate" />
         </div>
 
         <a class="btn-update-info" @click="changeInfo()">Update Info</a>
@@ -90,13 +98,11 @@
 </template>
 
 <script>
-
 import { mapGetters, mapActions } from "vuex";
 import UserAPI from "../api/UserAPI";
 
 export default {
-  components: {
-  },
+  components: {},
   data() {
     return {
       previewImage: "",
@@ -105,7 +111,7 @@ export default {
       address: "",
       phone: "",
       birthdate: "",
-    }
+    };
   },
   created() {
     this.getImg();
@@ -120,7 +126,7 @@ export default {
   methods: {
     ...mapActions(["setUser"]),
     getImg() {
-      this.previewImage = `http://localhost:5000/avatar/${this.userLogin.avatar}`;
+      this.previewImage = `https://shopfreshapi.herokuapp.com/avatar/${this.userLogin.avatar}`;
     },
     pickFile() {
       let input = this.$refs.fileInput;
@@ -139,7 +145,7 @@ export default {
     },
     async changeInfo() {
       console.log("Change Profile");
-      
+
       const formData = new FormData();
       formData.append("full_name", this.full_name);
       formData.append("address", this.address);
@@ -149,29 +155,28 @@ export default {
       formData.append("avatar", this.new_avatar);
 
       UserAPI.update(this.userLogin._id, formData)
-      .then((res) => {
-        this.setUser(res.data.userUpdated);
-        this.$swal.fire(
-          'Success!',
-          'You have successfully updated your information',
-          'success'
-        )
-      })
-      .catch((err) => {
-        this.$swal.fire(
-          'Uh oh!',
-          'Something went wrong. Double check your work.',
-          'error'
-        );
-        console.log(err.message);
-      });
+        .then((res) => {
+          this.setUser(res.data.userUpdated);
+          this.$swal.fire(
+            "Success!",
+            "You have successfully updated your information",
+            "success"
+          );
+        })
+        .catch((err) => {
+          this.$swal.fire(
+            "Uh oh!",
+            "Something went wrong. Double check your work.",
+            "error"
+          );
+          console.log(err.message);
+        });
     },
   },
 };
 </script>
 
 <style lang="postcss" scoped>
-
 .my-account-wrapper {
   @apply w-full max-w-full;
   @apply grid grid-cols-1 place-items-center sm:grid-cols-2 sm:place-items-start;
@@ -211,7 +216,7 @@ export default {
   box-shadow: rgba(57, 42, 35, 0.05) 0px 12px 10px -10px;
 }
 
-.input-avatar input[type='file']{
+.input-avatar input[type="file"] {
   @apply hidden;
 }
 

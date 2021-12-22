@@ -2,7 +2,7 @@ import CartAPI from "../../api/CartAPI";
 
 const state = {
   cart: {
-    user: '',
+    user: "",
     cartItems: [],
   },
   visibleMiniCart: false,
@@ -58,31 +58,29 @@ const actions = {
     await CartAPI.add(items, config)
       .then((res) => {
         console.log(res.data);
-        dispatch("getUserCart")
-        .then(() => {
+        dispatch("getUserCart").then(() => {
           return true;
-        })
+        });
       })
       .catch((error) => {
         console.log(error);
         return false;
       });
   },
-  async addAllToCart({ dispatch }, items ) {
+  async addAllToCart({ dispatch }, items) {
     let token = JSON.parse(sessionStorage.getItem("user_login"));
     let config = {
       headers: { Authorization: "bearer " + token },
     };
     items.forEach((item) => {
       item.price = (parseInt(item.price) * item.quantity).toString();
-    })
+    });
     await CartAPI.add(items, config)
       .then((res) => {
         console.log(res.data);
-        dispatch("getUserCart")
-        .then(() => {
+        dispatch("getUserCart").then(() => {
           return true;
-        })
+        });
       })
       .catch((error) => {
         console.log(error);
