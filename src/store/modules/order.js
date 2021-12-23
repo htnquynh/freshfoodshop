@@ -20,11 +20,11 @@ const getters = {
     state.orders.filter((order) => order.status == "Cancel"),
 };
 
-function sortOrderByDate(list) {
-  return list.sort(function(a,b){
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
-}
+// function sortOrderByDate(list) {
+//   return list.sort(function(a,b){
+//     return new Date(b.createdAt) - new Date(a.createdAt);
+//   });
+// }
 
 const actions = {
   async getOrders({ commit }) {
@@ -34,8 +34,8 @@ const actions = {
     };
     await OrderAPI.getUserOrder(config)
     .then((res) => {
-      let orders = res.data;
-      orders = sortOrderByDate(orders);
+      let orders = res.data.reverse();
+      // orders = sortOrderByDate(orders);
       commit("SET_ORDERS", orders);
     })
     .catch((err) => {

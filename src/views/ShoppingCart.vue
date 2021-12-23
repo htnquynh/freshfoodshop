@@ -120,10 +120,13 @@ export default {
   watch: {
   },
   created() {
-    this.getUserCart();
+    this.start_load();
+    this.getUserCart().then(() => {
+      this.stop_load();
+    });
   },
   methods: {
-    ...mapActions(["getUserCart"]),
+    ...mapActions(["getUserCart", "start_load", "stop_load"]),
     checkout() {
       this.$router.push({ name: "Checkout" });
     },

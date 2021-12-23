@@ -145,11 +145,11 @@ export default {
     };
   },
   created() {
-    // this.product = this.selectedGroup;
-    this.getGroups();
-    this.more_group = this.groups.slice(0, 3);
-    // this.enough_quantity = this.checkQuantity();
-    // console.log(this.enough_quantity);
+    this.start_load();
+    this.getGroups().then(() => {
+      this.more_group = this.groups.slice(0, 3);
+      this.stop_load();
+    });
   },
   computed: {
     ...mapGetters(["is_login", "selectedGroup", "groups"]),
@@ -162,7 +162,6 @@ export default {
       try {
         if (typeof value !== "number") {
           value = parseInt(value);
-          // return value;
         }
         var formatter = new Intl.NumberFormat("vi-VN", {
           style: "currency",
@@ -176,7 +175,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getGroups", "getUserCart"]),
+    ...mapActions(["getGroups", "getUserCart", "start_load", "stop_load"]),
     imageProduct(name) {
       return "/group/" + name;
     },
@@ -192,6 +191,7 @@ export default {
     },
     async addAllToCart() {
       if (this.is_login) {
+        this.start_load();
         let token = JSON.parse(sessionStorage.getItem("user_login"));
         let config = {
           headers: { Authorization: "bearer " + token },
@@ -210,18 +210,20 @@ export default {
           )
         }
         console.log(items);
-
         CartAPI.add(items, config)
         .then((res) => {
           console.log(res.data);
-          this.$swal.fire(
-            'Oh great!',
-            'Add all product to cart successfully!',
-            'success'
-          );
-          this.getUserCart();
+          this.getUserCart().then(() => {
+            this.stop_load();
+            this.$swal.fire(
+              'Oh great!',
+              'Add all product to cart successfully!',
+              'success'
+            );
+          });
         })
         .catch((error) => {
+          this.stop_load();
           console.log(error);
           this.$swal.fire(
             'Oh no!',

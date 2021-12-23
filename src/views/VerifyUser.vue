@@ -94,31 +94,40 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["setUser"]),
+    ...mapActions(["setUser", "start_load", "stop_load"]),
     liveOTP(current, next) {
       if (this.$refs[current].value.length) {
         this.$refs[next].focus();
       }
     },
     async verify() {
+      if (this.otp_1 == '' || this.otp_2 == '' || this.otp_3 == '' || this.otp_4 == '' || this.otp_5 == '') {
+        this.$swal.fire(
+          'Uh oh!',
+          'Please complete all information.',
+          'error'
+        );
+        return;
+      }
+      this.start_load();
       let verify_code = this.otp_1 + this.otp_2 + this.otp_3 + this.otp_4 + this.otp_5;
       console.log(verify_code);
-
-      UserAPI.verifyUser(verify_code)
+      await UserAPI.verifyUser(verify_code)
       .then((res) => {
         let user_login = JSON.stringify(res.data.accessToken);
         sessionStorage.setItem("user_login", user_login);
-
-        this.setUser(res.data.newUser);
-
-        this.$router.push({ name: "Home" });
-        this.$swal.fire(
-          'Welcome!',
-          'You have successfully registered!',
-          'success'
-        );
+        this.setUser(res.data.newUser).then(() => {
+          this.stop_load();
+          this.$router.push({ name: "Home" });
+          this.$swal.fire(
+            'Welcome!',
+            'You have successfully registered!',
+            'success'
+          );
+        });
       })
       .catch((err) => {
+        this.stop_load();
         this.$swal.fire(
           'Uh oh!',
           'Something went wrong. Double check your work.',

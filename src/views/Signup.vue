@@ -87,6 +87,7 @@ import TheSubscribe from '../components/TheSubscribe.vue';
 import MiniCart from '../components/MiniCart.vue';
 
 import UserAPI from "../api/UserAPI";
+import { mapActions } from "vuex";
 
 export default {
   components: {
@@ -147,6 +148,7 @@ export default {
     
   },
   methods: {
+    ...mapActions(["start_load", "stop_load"]),
     enableSubmit() {
       if (
         this.email_valid &&
@@ -205,18 +207,21 @@ export default {
       }
       this.enableSubmit();
     },
-    signup() {
+    async signup() {
       if (this.enableSubmit) {
+        this.start_load();
         if (this.checkEmailExist(this.user.email)) {
           this.email_valid = false;
           this.email_error = "Email already exists!";
           this.enableSubmit();
+          this.stop_load();
           return;
         }
         if (this.checkUsernameExist(this.user.username)) {
           this.username_valid = false;
           this.username_error = "Username already exists!";
           this.enableSubmit();
+          this.stop_load();
           return;
         }
         const formData = new FormData();
@@ -231,14 +236,15 @@ export default {
         formData.append("avatar", this.user.avatar);
         formData.append("status", this.user.status);
 
-        UserAPI.signup(formData).then((res) => {
+        await UserAPI.signup(formData).then((res) => {
+          this.stop_load();
           this.$router.push({ name: "VerifyUser" });
           console.log(res.data.message);
         });
       }
     },
-    checkEmailExist(email) {
-      UserAPI.getUserByEmail(email).then((res) => {
+    async checkEmailExist(email) {
+      await UserAPI.getUserByEmail(email).then((res) => {
         if(res.data) {
           return false;
         } else {
@@ -248,8 +254,8 @@ export default {
         console.log(err);
       });
     },
-    checkUsernameExist(username) {
-      UserAPI.getUserByUsername(username).then((res) => {
+    async checkUsernameExist(username) {
+      await UserAPI.getUserByUsername(username).then((res) => {
         if(res.data) {
           return false;
         } else {

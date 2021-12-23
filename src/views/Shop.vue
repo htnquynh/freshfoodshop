@@ -21,13 +21,21 @@
               </div>
               <div class="group-radio-box">
                 <label class="radio-box">
-                  <input type="radio" value="newest" name="order-sort" />
+                  <input 
+                    type="radio" 
+                    value="newest" 
+                    name="order-sort"
+                    v-model="checkedSort"/>
                   <span class="design"></span>
                   <span class="text">Newest</span>
                 </label>
 
                 <label class="radio-box">
-                  <input type="radio" value="oldest" name="order-sort" />
+                  <input 
+                    type="radio" 
+                    value="oldest" 
+                    name="order-sort"
+                    v-model="checkedSort"/>
                   <span class="design"></span>
                   <span class="text">Oldest</span>
                 </label>
@@ -37,6 +45,7 @@
                     type="radio"
                     value="price-low-to-high"
                     name="order-sort"
+                    v-model="checkedSort"
                   />
                   <span class="design"></span>
                   <span class="text">Price: Low to High</span>
@@ -47,6 +56,7 @@
                     type="radio"
                     value="price-high-to-low"
                     name="order-sort"
+                    v-model="checkedSort"
                   />
                   <span class="design"></span>
                   <span class="text">Price: High to Low</span>
@@ -268,6 +278,7 @@ export default {
     return {
       shop_products: [],
       checkedCategory: [],
+      checkedSort: "newest",
       priceFrom: 0,
       priceTo: 1000000,
       min: 0,
@@ -283,8 +294,17 @@ export default {
       inputRightActive: false,
     };
   },
+  created() {
+    this.start_load();
+    this.getCategory();
+    this.getProducts().then((res) => {
+      console.log(res);
+      this.filterByKeyWord();
+      this.stop_load();
+    });
+  },
   computed: {
-    ...mapGetters(["products", "filteredProduct", "category", "keyword"]),
+    ...mapGetters(["products", "category"]),
     totalPages: function () {
       return Math.ceil(this.resultCount / this.itemsPerPage);
     },
@@ -296,7 +316,6 @@ export default {
     toVND: function (value) {
       if (typeof value !== "number") {
         value = parseInt(value);
-        // return value;
       }
       var formatter = new Intl.NumberFormat("vi-VN", {
         style: "currency",
@@ -307,7 +326,11 @@ export default {
     },
   },
   watch: {
+    checkedSort: function () {
+      this.filter();
+    },
     shop_products() {
+      this.page = 1;
       this.setPages();
     },
     perPage() {
@@ -318,27 +341,25 @@ export default {
         console.log(search);
         this.filterByKeyWord();
         this.checkedCategory = [];
+        this.checkedSort = 'newest';
         this.priceFrom = 0;
         this.priceTo = 1000000;
       },
     },
   },
-  created() {
-    this.getCategory();
-    this.getProducts().then((res) => {
-      console.log(res);
-      this.filterByKeyWord();
-    });
-  },
+  
   methods: {
     ...mapActions(["getProducts", "getCategory", "start_load", "stop_load"]),
     filterByKeyWord() {
+      this.start_load();
       if (this.$route.params.key) {
         this.shop_products = this.products.filter((p) => {
           return p.name.toLowerCase().includes(this.$route.params.key);
         });
+        this.stop_load();
       } else {
         this.shop_products = this.products;
+        this.stop_load();
       }
     },
     setInputLeft() {
@@ -387,6 +408,7 @@ export default {
       this.filter();
     }, 600),
     async filter() {
+      this.start_load();
       await this.filterByKeyWord();
       if (this.checkedCategory.length != 0) {
         this.shop_products = this.shop_products.filter((p) => {
@@ -396,6 +418,8 @@ export default {
         });
       }
       this.shop_products = this.filterPrice(this.shop_products);
+      this.sortProducts();
+      this.stop_load();
     },
     filterPrice(listProduct) {
       return listProduct.filter((p) => {
@@ -406,6 +430,30 @@ export default {
           return true;
         }
       });
+    },
+    sortProducts() {
+      switch (this.checkedSort) {
+        case "oldest":
+          this.shop_products = this.shop_products.sort(function(a,b){
+            return new Date(a.createdAt) - new Date(b.createdAt);
+          });
+          break;
+        case "price-low-to-high":
+          this.shop_products = this.shop_products.sort(function(a,b){
+            return parseInt(a.price) - parseInt(b.price);
+          });
+          break;
+        case "price-high-to-low":
+          this.shop_products = this.shop_products.sort(function(a,b){
+            return parseInt(b.price) - parseInt(a.price);
+          });
+          break;
+        default:
+          this.shop_products = this.shop_products.sort(function(a,b){
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
+          break;
+      }
     },
   },
 };

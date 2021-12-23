@@ -2,7 +2,7 @@
   <div class="order">
     <div class="order-header">
       <div class="order-code-date">
-      <p class="order-code">Order {{ order._id | toCODE}}</p>
+        <p class="order-code">Order {{ order._id | toCODE}}</p>
         <p class="order-date">Order at: {{ order.date | toDateTime}}</p>
       </div>
       <p class="order-status">{{ order.status }}</p>
@@ -17,6 +17,7 @@
         :item="item"/>
     </div>
 
+    <p class="order-price">Total: <span>{{ order.total_price | toVND }}</span></p>
     <hr class="order-break-line" />
 
     <div class="order-footer">
@@ -26,7 +27,7 @@
     </div>
 
     <a v-if="order.status == 'Pending'"
-        @click="updateOrderStatus('RCancel')" class="order-action">
+        @click="updateOrderStatus('Cancel')" class="order-action">
         Cancel
     </a>
 
@@ -107,6 +108,7 @@ export default {
           'success'
         )
         this.getOrders().then(() => {
+          this.$emit("update-order");
           this.stop_load();
         });
       })
@@ -208,6 +210,16 @@ p.order-status {
   @apply text-xs;
 }
 
+.order-price {
+  @apply p-2;
+  @apply text-base text-right;
+}
+
+.order-price > span {
+  @apply px-1;
+  @apply text-base font-extrabold;
+}
+
 .product-qty {
   @apply flex-grow;
   @apply text-right;
@@ -225,8 +237,8 @@ p.order-status {
 
 a.order-action {
   @apply w-full;
-  @apply bg-dominant text-gold-500;
-  @apply text-sm font-semibold text-center;
+  @apply bg-secondary text-white;
+  @apply text-sm font-bold uppercase text-center;
   @apply p-2;
   @apply rounded-lg;
 }

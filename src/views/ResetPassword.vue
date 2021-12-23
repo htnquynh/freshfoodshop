@@ -41,6 +41,7 @@ import TheSubscribe from '../components/TheSubscribe.vue';
 import MiniCart from '../components/MiniCart.vue';
 
 import UserAPI from "../api/UserAPI";
+import { mapActions } from "vuex";
 
 export default {
   components: {
@@ -56,6 +57,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["start_load", "stop_load"]),
     async resetPassword() {
       if (this.new_password == "" || this.confirm_password == "") {
         this.$swal.fire(
@@ -75,9 +77,11 @@ export default {
         return;
       }
 
-      UserAPI.resetPassword(this.$route.params.email, this.new_password)
+      this.start_load();
+      await UserAPI.resetPassword(this.$route.params.email, this.new_password)
       .then((res) => {
         console.log(res.data.message);
+        this.stop_load();
         this.$router.push({
           name: "Login",
         });
@@ -88,6 +92,7 @@ export default {
         );
       })
       .catch((err) => {
+        this.stop_load();
         this.$swal.fire(
           'Uh oh!',
           'Something went wrong. Double check your work.',

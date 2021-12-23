@@ -114,17 +114,19 @@ export default {
     };
   },
   created() {
+    this.start_load();
     this.getImg();
     this.full_name = this.userLogin.full_name;
     this.address = this.userLogin.address;
     this.phone = this.userLogin.phone;
     this.birthdate = this.userLogin.birthdate;
+    this.stop_load();
   },
   computed: {
     ...mapGetters(["userLogin"]),
   },
   methods: {
-    ...mapActions(["setUser"]),
+    ...mapActions(["setUser", "start_load", "stop_load"]),
     getImg() {
       this.previewImage = `https://shopfreshapi.herokuapp.com/avatar/${this.userLogin.avatar}`;
     },
@@ -144,8 +146,8 @@ export default {
       this.new_avatar = e.target.files[0];
     },
     async changeInfo() {
+      this.start_load();
       console.log("Change Profile");
-
       const formData = new FormData();
       formData.append("full_name", this.full_name);
       formData.append("address", this.address);
@@ -154,16 +156,19 @@ export default {
       formData.append("old_avatar", this.userLogin.avatar);
       formData.append("avatar", this.new_avatar);
 
-      UserAPI.update(this.userLogin._id, formData)
+      await UserAPI.update(this.userLogin._id, formData)
         .then((res) => {
-          this.setUser(res.data.userUpdated);
-          this.$swal.fire(
-            "Success!",
-            "You have successfully updated your information",
-            "success"
-          );
+          this.setUser(res.data.userUpdated).then(() => {
+            this.stop_load();
+            this.$swal.fire(
+              "Success!",
+              "You have successfully updated your information",
+              "success"
+            );
+          });
         })
         .catch((err) => {
+          this.stop_load();
           this.$swal.fire(
             "Uh oh!",
             "Something went wrong. Double check your work.",

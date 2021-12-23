@@ -203,8 +203,11 @@ export default {
     };
   },
   created() {
-    this.getProducts();
-    this.more_product = this.products.slice(0, 4);
+    this.start_load();
+    this.getProducts().then(() => {
+      this.more_product = this.products.slice(0, 4);
+      this.stop_load();
+    });
   },
   computed: {
     ...mapGetters(["is_login", "selectedProduct", "products", "wishlist"]),
@@ -235,6 +238,8 @@ export default {
         "addItemToCart", 
         "addItemToWishlist",
         "addItemsToWishlist",
+        "start_load",
+        "stop_load",
       ]
     ),
     imageProduct(name) {
@@ -274,6 +279,7 @@ export default {
 
     async addItemToCart() {
       if (this.is_login) {
+        this.start_load();
         let token = JSON.parse(sessionStorage.getItem("user_login"));
         let config = {
           headers: { Authorization: "bearer " + token },
@@ -292,18 +298,21 @@ export default {
             price: total_price.toString(),
           }
         ];
-        CartAPI.add(items, config)
+        await CartAPI.add(items, config)
         .then((res) => {
           console.log(res.data);
-          this.$swal.fire(
-            'Oh great!',
-            'Add product to cart successfully!',
-            'success'
-          );
-          this.getUserCart();
+          this.getUserCart().then(() => {
+            this.stop_load();
+            this.$swal.fire(
+              'Oh great!',
+              'Add product to cart successfully!',
+              'success'
+            );
+          });
         })
         .catch((error) => {
           console.log(error);
+          this.stop_load();
           this.$swal.fire(
             'Oh no!',
             'Something went wrong. Double check your work.',
@@ -323,8 +332,10 @@ export default {
     },
 
     async addToWishlist(product) {
+      this.start_load();
       const item = this.wishlist.find((item) => item._id == product._id);
       if (item) {
+        this.stop_load();
         this.$swal.fire(
           'Uh oh!',
           'Product already exists in wishlist!',
@@ -334,12 +345,14 @@ export default {
       }
       await this.addItemToWishlist(product).then((res) => {
         console.log(res);
-        this.addItemsToWishlist();
-        this.$swal.fire(
-          'Great!',
-          'Added product to wishlist successfully!',
-          'success'
-        )
+        this.addItemsToWishlist().then(() => {
+          this.stop_load();
+          this.$swal.fire(
+            'Great!',
+            'Added product to wishlist successfully!',
+            'success'
+          )
+        });
       });
     },
   },

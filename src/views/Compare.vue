@@ -184,6 +184,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.stop_load();
           this.$swal.fire(
             'Oh no!',
             'Something went wrong. Double check your work.',

@@ -75,6 +75,7 @@ import TheSubscribe from '../components/TheSubscribe.vue';
 import MiniCart from '../components/MiniCart.vue';
 
 import UserAPI from "../api/UserAPI";
+import { mapActions } from "vuex";
 
 export default {
   components: {
@@ -93,18 +94,30 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["start_load", "stop_load"]),
     liveOTP(current, next) {
       if (this.$refs[current].value.length) {
         this.$refs[next].focus();
       }
     },
     async verify() {
+      if (this.otp_1 == '' || this.otp_2 == '' || this.otp_3 == '' || this.otp_4 == '' || this.otp_5 == '') {
+        this.$swal.fire(
+          'Uh oh!',
+          'Please complete all information.',
+          'error'
+        );
+        return;
+      }
+
+      this.start_load();
       let verify_code = this.otp_1 + this.otp_2 + this.otp_3 + this.otp_4 + this.otp_5;
       console.log(verify_code);
 
-      UserAPI.verifyResetPassword(verify_code)
+      await UserAPI.verifyResetPassword(verify_code)
       .then((res) => {
         console.log(res.data.newUser);
+        this.stop_load();
         this.$router.push({
           name: "ResetPassword",
           params: { email: this.$route.params.email },
@@ -116,6 +129,7 @@ export default {
         );
       })
       .catch((err) => {
+        this.stop_load();
         this.$swal.fire(
           'Uh oh!',
           'Something went wrong. Double check your work.',

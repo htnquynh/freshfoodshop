@@ -306,6 +306,7 @@ export default {
     logout() {
       this.$swal.fire({
         title: 'Are you sure you want to logout?',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Logout',
       }).then((result) => {
@@ -316,13 +317,17 @@ export default {
             this.logoutCart().then(() => {
               this.logoutWishlist().then(() => {
                 this.stop_load();
+                if (this.$router.currentRoute.path != "/") {
+                  this.$router.push("/");
+                }
+                this.$swal.fire(
+                  'Goodbye!',
+                  'Successful Logout!',
+                  'success'
+                );
               });
             });
           });
-          
-          if (this.$router.currentRoute.path != "/") {
-            this.$router.push("/");
-          }
         }
       });
     },

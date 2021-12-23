@@ -79,30 +79,13 @@ export default {
   watch: {
   },
   created() {
-    // this.getCartItems();
+    this.start_load();
+    this.getWishlist().then(() => {
+      this.stop_load();
+    });
   },
   methods: {
-    ...mapActions(["deleteItem", "addItemsToWishlist"]),
-    imageProduct(name) {
-      try {
-        let img = "/products/" + name;
-        return img;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async deleteProduct(product_id) {
-      await this.deleteItem(product_id).then((res) => {
-        console.log(res);
-        this.$notify({
-          group: "foo",
-          type: "success",
-          title: "Wishlist",
-          text: "Deleted product to wishlist successfully!",
-        });
-        this.addItemsToWishlist();
-      });
-    },
+    ...mapActions(["getWishlist", "start_load", "stop_load"]),
   },
 };
 </script>

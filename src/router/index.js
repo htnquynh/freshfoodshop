@@ -186,7 +186,8 @@ router.beforeResolve((to, from, next) => {
 
 router.afterEach(() => {
   // Complete the animation of the route progress bar.
-  setTimeout(() => store.dispatch("stop_load"), 1700);
+  store.dispatch("stop_load");
+  // setTimeout(() => store.dispatch("stop_load"), 1700);
 });
 
 export default router;

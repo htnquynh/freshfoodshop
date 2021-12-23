@@ -10,18 +10,18 @@ const getters = {
   selectedGroup: (state) => state.selectedGroup,
 };
 
-function sortGroupByDate(list) {
-  return list.sort(function(a,b){
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
-}
+// function sortGroupByDate(list) {
+//   return list.sort(function(a,b){
+//     return new Date(b.createdAt) - new Date(a.createdAt);
+//   });
+// }
 
 const actions = {
   async getGroups({ commit }) {
     await GroupAPI.get()
       .then((res) => {
-        let groups = res.data;
-        groups = sortGroupByDate(groups);
+        let groups = res.data.reverse();
+        // groups = sortGroupByDate(groups);
         commit("SET_GROUPS", groups);
       })
       .catch((err) => {

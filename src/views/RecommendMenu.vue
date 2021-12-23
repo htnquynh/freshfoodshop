@@ -80,8 +80,8 @@
             </div>
           </div>
           
-          <div v-else class="list-group-wrapper">
-            <p class="text-3xl font-bold opacity-20 text-center">NOTHING HERE</p>
+          <div v-else class="list-group-wrapper h-64 sm:h-64 md:h-64 lg:h-72">
+            <p class="p-8 text-3xl font-bold opacity-20 text-center">NOTHING HERE</p>
           </div>
 
         </div>
@@ -140,7 +140,11 @@ export default {
     },
   },
   watch: {
+    selectedSort: function () {
+      this.sortMenus();
+    },
     recommend_menu() {
+      this.page = 1;
       this.setPages();
     },
     perPage() {
@@ -149,14 +153,39 @@ export default {
   },
   methods: {
     ...mapActions(["getGroups", "start_load", "stop_load"]),
-    fetchGroup() {
-      this.getGroups()
-      .then(() => {
-        console.log("Fetch Group");
-        this.recommend_menu = this.groups;
-      });
+    // fetchGroup() {
+    //   this.getGroups()
+    //   .then(() => {
+    //     console.log("Fetch Group");
+    //     this.recommend_menu = this.groups;
+    //   });
+    // },
+    sortMenus() {
+      switch (this.selectedSort) {
+        case "oldest":
+          this.recommend_menu = this.recommend_menu.sort(function(a,b){
+            return new Date(a.createdAt) - new Date(b.createdAt);
+          });
+          break;
+        case "price-low-to-high":
+          this.recommend_menu = this.recommend_menu.sort(function(a,b){
+            return parseInt(a.price) - parseInt(b.price);
+          });
+          break;
+        case "price-high-to-low":
+          this.recommend_menu = this.recommend_menu.sort(function(a,b){
+            return parseInt(b.price) - parseInt(a.price);
+          });
+          break;
+        default:
+          this.recommend_menu = this.recommend_menu.sort(function(a,b){
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
+          break;
+      }
     },
     searchMenu() {
+      this.start_load();
       console.log(this.keyword);
       this.recommend_menu = this.groups.filter((g) => {
         if (g.title.toLowerCase().includes(this.keyword.toLowerCase())) {
@@ -164,6 +193,8 @@ export default {
         }
         return this.checkIngredient(g.material);
       });
+      this.sortMenus();
+      this.stop_load();
     },
     checkIngredient(list) {
       let has_keyword = false;

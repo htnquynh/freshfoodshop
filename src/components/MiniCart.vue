@@ -160,7 +160,7 @@ export default {
 .cart {
   @apply absolute inset-0;
   @apply overflow-hidden;
-  @apply z-50;
+  @apply z-40;
   visibility: visible;
 }
 

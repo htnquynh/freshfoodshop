@@ -37,6 +37,7 @@ import TheFooter from '../components/TheFooter.vue';
 import TheSubscribe from '../components/TheSubscribe.vue';
 import MiniCart from '../components/MiniCart.vue';
 
+import { mapActions } from "vuex";
 import UserAPI from '../api/UserAPI';
 
 export default {
@@ -52,12 +53,24 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["start_load", "stop_load"]),
     async sendMail() {
-      UserAPI.getUserByEmail(this.email)
+      if(this.email == '') {
+        this.$swal.fire(
+          'Uh oh!',
+          'Please enter your email address.',
+          'error'
+        );
+        return;
+      }
+
+      this.start_load();
+      await UserAPI.getUserByEmail(this.email)
       .then((res) => {
         if(res.data) {
           UserAPI.forgotPassword(this.email)
           .then((res) => {
+            this.stop_load();
             console.log(res.data);
             this.$router.push({
               name: "VerifyResetPassword",
@@ -65,6 +78,7 @@ export default {
             });
           })
           .catch((err) => {
+            this.stop_load();
             this.$swal.fire(
               'Uh oh!',
               'Something went wrong. Double check your work.',
@@ -73,6 +87,7 @@ export default {
             console.log(err.message);
           });
         } else {
+          this.stop_load();
           this.$swal.fire(
             'Oh oh!',
             'This email is not registered!',
@@ -80,7 +95,15 @@ export default {
           );
         }
       })
-      
+      .catch((err) => {
+        this.stop_load();
+        this.$swal.fire(
+          'Uh oh!',
+          'Something went wrong. Double check your work.',
+          'error'
+        );
+        console.log(err.message);
+      });
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <div v-show="isLoading" class="loading-screen">
-    <svg class="w-32 h-16" viewBox="-2000 -1000 4000 2000">
+    <svg class="w-40 h-20" viewBox="-2000 -1000 4000 2000">
       <path id="inf" d="M354-354A500 500 0 1 1 354 354L-354-354A500 500 0 1 0-354 354z"></path>
       <use xlink:href="#inf" stroke-dasharray="1570 5143" stroke-dashoffset="6713px"></use>
     </svg>
@@ -21,7 +21,7 @@ export default {
   @apply z-50;
   @apply fixed inset-0;
   @apply w-screen h-screen;
-  @apply bg-gray-900 bg-opacity-70;
+  @apply bg-gray-900 bg-opacity-50;
   @apply text-gold-500;
   @apply flex flex-col justify-center items-center;
 }

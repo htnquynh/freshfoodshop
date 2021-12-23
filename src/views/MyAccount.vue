@@ -145,35 +145,37 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["logoutUser", "logoutWishlist", "logoutCart",]),
-    setTab(newTab) {
-      this.currentTab = newTab;
-    },
+    ...mapActions(["logoutUser", "logoutWishlist", "logoutCart", "start_load", "stop_load"]),
     isCurrentTab(name_router) {
       return this.$route.name == name_router;
     },
     logout() {
       this.$swal.fire({
         title: 'Are you sure you want to logout?',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Logout',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.logoutUser();
-          this.logoutWishlist();
-          this.logoutCart();
-
+          this.start_load();
           sessionStorage.removeItem("user_login");
-          if (this.$router.currentRoute.path != "/") {
-            this.$router.push("/");
-          }
-          this.$swal.fire(
-            'Goodbye!',
-            'Successful Logout!',
-            'success'
-          )
-        } 
-      })
+          this.logoutUser().then(() => {
+            this.logoutCart().then(() => {
+              this.logoutWishlist().then(() => {
+                this.stop_load();
+                if (this.$router.currentRoute.path != "/") {
+                  this.$router.push("/");
+                }
+                this.$swal.fire(
+                  'Goodbye!',
+                  'Successful Logout!',
+                  'success'
+                );
+              });
+            });
+          });
+        }
+      });
     },
   },
 };

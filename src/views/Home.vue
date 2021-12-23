@@ -206,27 +206,26 @@ export default {
     };
   },
   async created() {
+    this.start_load();
     this.getProducts().then((res) => {
       console.log(res);
       this.featured = this.products.slice(0, 8);
       this.best_seller = this.sortProductBySold(this.products).slice(0, 2);
       this.new_arrival = this.featured.slice(0, 2);
+      this.getGroups().then(() => {
+        this.stop_load();
+      });
     });
-    this.getGroups();
+    
   },
   computed: {
     ...mapGetters(["products", "groups"]),
   },
   methods: {
-    ...mapActions(["getProducts", "getGroups"]),
+    ...mapActions(["getProducts", "getGroups", "start_load", "stop_load"]),
     sortProductBySold(list) {
       return list.sort(function (a, b) {
         return b.quantity_sold - a.quantity_sold;
-      });
-    },
-    sortProductByDate(list) {
-      return list.sort(function (a, b) {
-        return new Date(b.createdAt) - new Date(a.createdAt);
       });
     },
   },
