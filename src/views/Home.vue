@@ -90,7 +90,7 @@
         </div>
 
         <div class="ads-banner">
-          <img src="../assets/image/Good food (3).gif" />
+          <img src="../assets/image/banner-small-2.gif" />
         </div>
       </div>
 
@@ -127,7 +127,7 @@
         </div>
 
         <div class="ads-banner">
-          <img src="../assets/image/Good food (5).gif" />
+          <img src="../assets/image/banner-small-1.gif" />
         </div>
       </div>
 
