@@ -90,7 +90,7 @@
         </div>
 
         <div class="ads-banner">
-          <img src="../assets/image/banner-small-2.gif" />
+          <img src="../assets/image/banner-13.png" />
         </div>
       </div>
 
@@ -134,9 +134,7 @@
       <div class="section-recommend-menu">
         <div class="section-product">
           <div class="section-product-title">
-            <h2 class="section-title">
-              Recommend menu.
-            </h2>
+            <h2 class="section-title">Recommend menu.</h2>
             <router-link to="/recommend-menu">
               <a class="hover:text-gold-500">
                 Show All
@@ -216,7 +214,6 @@ export default {
         this.stop_load();
       });
     });
-    
   },
   computed: {
     ...mapGetters(["products", "groups"]),

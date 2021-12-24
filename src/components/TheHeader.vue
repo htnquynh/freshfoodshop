@@ -279,7 +279,15 @@ export default {
     ...mapGetters(["is_login", "keyword", "noItems", "wishlist_length"]),
   },
   methods: {
-    ...mapActions(["setKeyword", "setVisibleMiniCart", "logoutUser", "logoutWishlist", "logoutCart", "start_load", "stop_load"]),
+    ...mapActions([
+      "setKeyword",
+      "setVisibleMiniCart",
+      "logoutUser",
+      "logoutWishlist",
+      "logoutCart",
+      "start_load",
+      "stop_load",
+    ]),
     toggle_menu() {
       this.is_menu_open = !this.is_menu_open;
     },
@@ -304,32 +312,30 @@ export default {
       this.search = "";
     },
     logout() {
-      this.$swal.fire({
-        title: 'Are you sure you want to logout?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Logout',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.start_load();
-          sessionStorage.removeItem("user_login");
-          this.logoutUser().then(() => {
-            this.logoutCart().then(() => {
-              this.logoutWishlist().then(() => {
-                this.stop_load();
-                if (this.$router.currentRoute.path != "/") {
-                  this.$router.push("/");
-                }
-                this.$swal.fire(
-                  'Goodbye!',
-                  'Successful Logout!',
-                  'success'
-                );
+      this.$swal
+        .fire({
+          title: "Are you sure you want to logout?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Logout",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.start_load();
+            sessionStorage.removeItem("user_login");
+            this.logoutUser().then(() => {
+              this.logoutCart().then(() => {
+                this.logoutWishlist().then(() => {
+                  this.stop_load();
+                  if (this.$router.currentRoute.path != "/") {
+                    this.$router.push("/");
+                  }
+                  this.$swal.fire("Goodbye!", "Successful Logout!", "success");
+                });
               });
             });
-          });
-        }
-      });
+          }
+        });
     },
   },
 };
@@ -338,6 +344,8 @@ export default {
 <style lang="postcss" scoped>
 .header-wrapper {
   @apply flex flex-col;
+  @apply sticky inset-0;
+  @apply z-30;
 }
 
 .header-bottom {

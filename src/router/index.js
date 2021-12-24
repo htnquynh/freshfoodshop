@@ -23,9 +23,9 @@ const Profile = () => import("../views/Profile.vue");
 const MyOrders = () => import("../views/MyOrders.vue");
 const ChangePassword = () => import("../views/ChangePassword.vue");
 
-const Wishlist = () => import('../views/Wishlist.vue')
-const Compare = () => import('../views/Compare.vue')
-const PageNotFound = () => import('../views/PageNotFound.vue')
+const Wishlist = () => import("../views/Wishlist.vue");
+const Compare = () => import("../views/Compare.vue");
+const PageNotFound = () => import("../views/PageNotFound.vue");
 
 Vue.use(VueRouter);
 
@@ -173,6 +173,9 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+  scrollBehavior() {
+    return { x: 0, y: 0 };
+  },
 });
 
 router.beforeResolve((to, from, next) => {
