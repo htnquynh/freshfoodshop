@@ -90,7 +90,7 @@
         </div>
 
         <div class="ads-banner">
-          <img src="../assets/image/banner-13.png" />
+          <img src="../assets/image/banner-small-2.gif" />
         </div>
       </div>
 
