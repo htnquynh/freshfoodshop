@@ -1,7 +1,7 @@
 <template>
   <div class="home relative">
-    <TheHeader class="header-page"/>
-    <MiniCart/>
+    <TheHeader class="header-page" />
+    <MiniCart />
     <div class="page-content">
       <div class="login-form-wrapper">
         <div class="form-title">
@@ -12,23 +12,28 @@
         <div class="login-form">
           <div class="login-input">
             <div class="input-text">
-              <label >Username</label>
-              <input ref="username-input" type="text" v-model="username">
+              <label>Username</label>
+              <input ref="username-input" type="text" v-model="username" />
             </div>
 
             <div class="input-text">
               <label for="">Password</label>
-              <input ref="password-input" type="password" v-model="password">
+              <input ref="password-input" type="password" v-model="password" />
             </div>
           </div>
 
           <div class="remember-me-forgot-password">
             <label class="check-box">
-              <input v-model="check" type="checkbox" value="remember-me" name="remember">
+              <input
+                v-model="check"
+                type="checkbox"
+                value="remember-me"
+                name="remember"
+              />
               <span class="design"></span>
               <span class="text">Remember me</span>
             </label>
-            <router-link to='/forgot-password'>
+            <router-link to="/forgot-password">
               <a class="forgot-password">Forgot Password</a>
             </router-link>
           </div>
@@ -37,7 +42,10 @@
             <a ref="btn-login" @click="submitForm()" class="btn-login">
               <span>Login to Account</span>
             </a>
-
+            <br />
+            <div class="text-center ma-5">Or</div>
+            <br />
+            <button @click="googleSignIn()">Login with google</button>
             <div class="link-sign-up">
               <p>Don't have an account?</p>
               <router-link to="/signup">
@@ -48,19 +56,20 @@
         </div>
       </div>
     </div>
-    <TheSubscribe/>
-    <TheFooter/>
+    <TheSubscribe />
+    <TheFooter />
   </div>
 </template>
 
 <script>
-import TheHeader from '../components/TheHeader.vue';
-import TheFooter from '../components/TheFooter.vue';
-import TheSubscribe from '../components/TheSubscribe.vue';
-import MiniCart from '../components/MiniCart.vue';
+import TheHeader from "../components/TheHeader.vue";
+import TheFooter from "../components/TheFooter.vue";
+import TheSubscribe from "../components/TheSubscribe.vue";
+import MiniCart from "../components/MiniCart.vue";
 
 import { mapActions } from "vuex";
 import UserAPI from "../api/UserAPI";
+import * as firebase from "firebase";
 
 export default {
   components: {
@@ -71,13 +80,31 @@ export default {
   },
   data() {
     return {
-      check: ['remember-me'],
+      check: ["remember-me"],
       username: "",
       password: "",
+      user: {
+        username: "",
+        password: "",
+        full_name: "",
+        email: "",
+        position: "customer",
+        birthdate: "",
+        address: "",
+        phone: "",
+        avatar: "",
+        status: "active",
+      },
     };
   },
   methods: {
-    ...mapActions(["getUserCart", "getWishlist", "setUser", "start_load", "stop_load"]),
+    ...mapActions([
+      "getUserCart",
+      "getWishlist",
+      "setUser",
+      "start_load",
+      "stop_load",
+    ]),
     async login(username, password) {
       this.start_load();
       await UserAPI.login(username, password)
@@ -90,47 +117,78 @@ export default {
             this.stop_load();
             this.$router.push("/");
             this.$swal.fire(
-              'Welcome!',
-              'You have successfully logged in.',
-              'success'
+              "Welcome!",
+              "You have successfully logged in.",
+              "success"
             );
           });
         })
         .catch((err) => {
           console.log(err.message);
           this.stop_load();
-          this.$swal.fire(
-            'Uh oh!',
-            'You have failed to login.',
-            'error'
-          );
+          this.$swal.fire("Uh oh!", "You have failed to login.", "error");
         });
     },
     async submitForm() {
-      if(this.username == '') {
+      if (this.username == "") {
         console.log("Username Empty");
-        this.$swal.fire(
-          'Oops...',
-          'Please enter your Username!',
-          'error'
-        );
-      } else if (this.password == '') {
+        this.$swal.fire("Oops...", "Please enter your Username!", "error");
+      } else if (this.password == "") {
         console.log("Password Empty");
-        this.$swal.fire(
-          'Oops...',
-          'Please enter your Password!',
-          'error'
-        );
+        this.$swal.fire("Oops...", "Please enter your Password!", "error");
       } else {
         this.login(this.username, this.password);
       }
+    },
+    async googleSignIn() {
+      let provider = new firebase.auth.GoogleAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then((result) => {
+          this.start_load();
+          //let token = result.credential.accessToken;
+          let user = result.user;
+          const { email, phoneNumber, photoURL, displayName } =
+            user.providerData[0];
+          this.user.username = Math.random().toString(36);
+          this.user.password = Math.random().toString(36);
+          this.user.email = email;
+          this.user.phone = phoneNumber || "";
+          this.user.avatar = photoURL;
+          this.user.full_name = displayName;
+          console.log(this.user);
+          UserAPI.login_with_google(this.user)
+            .then((res) => {
+              let user_login = JSON.stringify(res.data.accessToken);
+              sessionStorage.setItem("user_login", user_login);
+              this.setUser(res.data.user).then(() => {
+                this.getUserCart();
+                this.getWishlist();
+                this.stop_load();
+                this.$router.push("/");
+                this.$swal.fire(
+                  "Welcome!",
+                  "You have successfully logged in.",
+                  "success"
+                );
+              });
+            })
+            .catch((err) => {
+              console.log(err.message);
+              this.stop_load();
+              this.$swal.fire("Uh oh!", "You have failed to login.", "error");
+            });
+        })
+        .catch((err) => {
+          console.log(err); // This will give you all the information needed to further debug any errors
+        });
     },
   },
 };
 </script>
 
 <style lang="postcss" scoped>
-
 .home {
   @apply flex flex-col;
 }
@@ -220,7 +278,6 @@ a.btn-login {
 .link-sign-up {
   @apply pt-4;
   @apply flex flex-row items-center gap-2;
-  
 }
 
 .link-sign-up p {
@@ -230,5 +287,4 @@ a.btn-login {
 .link-sign-up a {
   @apply font-semibold;
 }
-
 </style>

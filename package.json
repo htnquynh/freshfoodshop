@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --https true",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "start": "node server.js"
@@ -12,8 +12,12 @@
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "express": "^4.17.2",
+    "firebase": "^4.5.0",
+    "firebaseui": "^6.0.1",
+    "mkcert": "^1.5.0",
     "serve-static": "^1.14.2",
     "vue": "^2.6.11",
+    "vue-fb-customer-chat": "^0.2.1",
     "vue-router": "^3.2.0",
     "vue-sweetalert2": "^5.0.2",
     "vuex": "^3.6.2",

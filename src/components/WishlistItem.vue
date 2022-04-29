@@ -1,8 +1,7 @@
 <template>
   <div class="group-item-wrapper">
     <div class="group-item">
-      <img class="group-item-image"
-        :src="imageProduct(product.image)" >
+      <img class="group-item-image" :src="product.image" />
       <div class="group-item-spec">
         <div class="product-spec">
           <p class="product-category">{{ product.category }}</p>
@@ -13,7 +12,11 @@
           <p class="product-unit">/ 1 kg</p>
         </div>
         <div class="product-action">
-          <a v-show="product.quantity_remaining > 0" class="btn-add-to-cart" @click="addItemToCart()">
+          <a
+            v-show="product.quantity_remaining > 0"
+            class="btn-add-to-cart"
+            @click="addItemToCart()"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -32,17 +35,19 @@
         </div>
 
         <button class="btn-remove-item" @click="deleteItem(product._id)">
-          <svg 
-            class="h-6 w-6" 
-            xmlns="http://www.w3.org/2000/svg" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor">
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="2" 
-              d="M6 18L18 6M6 6l12 12"/>
+          <svg
+            class="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
@@ -57,16 +62,14 @@ import CartAPI from "../api/CartAPI";
 export default {
   props: ["product"],
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   computed: {
     ...mapGetters(["is_login", "wishlist"]),
   },
   filters: {
-    toVND: function(value) {
+    toVND: function (value) {
       if (typeof value !== "number") {
         value = parseInt(value);
         // return value;
@@ -80,26 +83,23 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getUserCart", "deleteWishlistItem", "addItemsToWishlist", "start_load", "stop_load"]),
-    imageProduct(name) {
-      try {
-          let img = "/products/" + name;
-          return img;
-      } catch (error) {
-          console.log(error);
-      }
-    },
+    ...mapActions([
+      "getUserCart",
+      "deleteWishlistItem",
+      "addItemsToWishlist",
+      "start_load",
+      "stop_load",
+    ]),
     async deleteItem(product_id) {
       this.start_load();
-      await this.deleteWishlistItem(product_id)
-      .then((res) => {
+      await this.deleteWishlistItem(product_id).then((res) => {
         console.log(res);
         this.stop_load();
         this.$swal.fire(
-          'Success!',
-          'The product has been removed from wishlist.',
-          'success'
-        )
+          "Success!",
+          "The product has been removed from wishlist.",
+          "success"
+        );
       });
     },
     async addItemToCart() {
@@ -109,32 +109,34 @@ export default {
         let config = {
           headers: { Authorization: "bearer " + token },
         };
-        let items = [{product: this.product._id, quantity: 1, price: this.product.price}];
+        let items = [
+          { product: this.product._id, quantity: 1, price: this.product.price },
+        ];
         await CartAPI.add(items, config)
-        .then((res) => {
-          console.log(res.data);
-          this.$swal.fire(
-            'Oh great!',
-            'Add product to cart successfully!',
-            'success'
-          );
-          this.getUserCart().then(() => {
-            this.stop_load();
+          .then((res) => {
+            console.log(res.data);
+            this.$swal.fire(
+              "Oh great!",
+              "Add product to cart successfully!",
+              "success"
+            );
+            this.getUserCart().then(() => {
+              this.stop_load();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$swal.fire(
+              "Oh no!",
+              "Something went wrong. Double check your work.",
+              "fail"
+            );
           });
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire(
-            'Oh no!',
-            'Something went wrong. Double check your work.',
-            'fail'
-          );
-        });
       } else {
         this.$swal.fire(
-          'Login to your account',
-          'You must be logged in to be able to add products to your cart.',
-          'warning'
+          "Login to your account",
+          "You must be logged in to be able to add products to your cart.",
+          "warning"
         );
         this.$router.push({
           name: "Login",
@@ -142,11 +144,10 @@ export default {
       }
     },
   },
-}
+};
 </script>
 
 <style lang="postcss" scoped>
-
 .group-item-wrapper {
   /* @apply flex-shrink-0; */
   @apply p-2;
@@ -243,5 +244,4 @@ a.btn-add-to-cart svg {
 .btn-remove-item svg {
   @apply w-5 h-5;
 }
-
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="group-item-wrapper">
     <div class="group-item">
-      <img class="group-item-image" :src="imageProduct(item.product.image)" >
+      <img class="group-item-image" :src="item.product.image" />
       <div class="group-item-spec">
         <div class="product-spec">
           <p class="product-category">{{ item.product.category }}</p>
@@ -11,7 +11,7 @@
             <p class="product-unit">/ 1 kg</p>
           </div>
         </div>
-        <p class="product-qty">x {{item.quantity}}</p>
+        <p class="product-qty">x {{ item.quantity }}</p>
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@
 export default {
   props: ["item"],
   filters: {
-    toVND: function(value) {
+    toVND: function (value) {
       if (typeof value !== "number") {
         value = parseInt(value);
       }
@@ -33,21 +33,11 @@ export default {
       return formatter.format(value);
     },
   },
-  methods: {
-    imageProduct(name) {
-      try {
-        let img = "/products/" + name;
-        return img;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  },
-}
+  methods: {},
+};
 </script>
 
 <style lang="postcss" scoped>
-
 .group-item-wrapper {
   @apply w-full;
 }
@@ -100,5 +90,4 @@ export default {
   @apply text-right;
   @apply text-sm font-normal;
 }
-
 </style>

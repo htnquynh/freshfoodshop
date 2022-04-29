@@ -1,7 +1,7 @@
 <template>
   <div class="group-item-wrapper">
     <div class="group-item">
-      <img class="group-item-image"  :src="imageProduct(item.product.image)" >
+      <img class="group-item-image" :src="item.product.image" />
       <div class="group-item-spec">
         <div class="product-spec">
           <p class="product-category">{{ item.product.category }}</p>
@@ -11,7 +11,7 @@
             <p class="product-unit">/ 1 kg</p>
           </div>
         </div>
-        
+
         <div class="product-action">
           <div class="input-quantity">
             <button class="btn-minus-qty" @click="minusQuantity()">
@@ -28,11 +28,13 @@
                 />
               </svg>
             </button>
-            <input type="number"
-              min=1
-              max=99999
+            <input
+              type="number"
+              min="1"
+              max="99999"
               @change="updateQuantity()"
-              v-model="new_quantity"/>
+              v-model="new_quantity"
+            />
             <button class="btn-add-qty" @click="plusQuantity()">
               <svg
                 width="24"
@@ -56,18 +58,23 @@
 
         <p class="product-total">{{ item.price | toVND }}</p>
 
-        <button class="btn-remove-item" @click="removeByProductId(item.product._id)">
-          <svg 
-            class="h-6 w-6" 
-            xmlns="http://www.w3.org/2000/svg" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor">
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="2" 
-              d="M6 18L18 6M6 6l12 12"/>
+        <button
+          class="btn-remove-item"
+          @click="removeByProductId(item.product._id)"
+        >
+          <svg
+            class="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
@@ -90,12 +97,11 @@ export default {
   watch: {
     item: function () {
       this.new_quantity = this.item.quantity;
-    }
+    },
   },
-  computed: {
-  },
+  computed: {},
   filters: {
-    toVND: function(value) {
+    toVND: function (value) {
       if (typeof value !== "number") {
         value = parseInt(value);
         // return value;
@@ -109,57 +115,50 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["addItemToCart", "removeByProductId", "getSelectedProduct", "start_load", "stop_load"]),
-    imageProduct(name) {
-        try {
-            let img = "/products/" + name;
-            return img;
-        } catch (error) {
-            console.log(error);
-        }
-    },
+    ...mapActions([
+      "addItemToCart",
+      "removeByProductId",
+      "getSelectedProduct",
+      "start_load",
+      "stop_load",
+    ]),
     updateQuantity() {
-      if (this.new_quantity < 1 ) {
-          this.new_quantity = this.item.quantity;
+      if (this.new_quantity < 1) {
+        this.new_quantity = this.item.quantity;
       } else if (this.item.product.quantity_remaining < this.new_quantity) {
-          this.$swal.fire(
-            'Warning!',
-            'This product is out of stock!',
-            'warning'
-          )
-          this.new_quantity = this.item.quantity;
+        this.$swal.fire("Warning!", "This product is out of stock!", "warning");
+        this.new_quantity = this.item.quantity;
       } else {
         this.start_load();
         let new_item = {
-          'id': this.item.product._id, 
-          'quantity': parseInt(this.new_quantity), 
-          'price': this.item.product.price
-          }
+          id: this.item.product._id,
+          quantity: parseInt(this.new_quantity),
+          price: this.item.product.price,
+        };
         this.addItemToCart(new_item).then(() => {
           this.stop_load();
         });
       }
     },
     minusQuantity() {
-        if (this.new_quantity > 1) {
-          this.new_quantity --;
-          this.updateQuantity();
+      if (this.new_quantity > 1) {
+        this.new_quantity--;
+        this.updateQuantity();
       }
       console.log(this.new_quantity);
     },
     plusQuantity() {
       if (this.new_quantity < this.item.product.quantity_remaining) {
-          this.new_quantity ++;
-          console.log(this.new_quantity);
-          this.updateQuantity();
+        this.new_quantity++;
+        console.log(this.new_quantity);
+        this.updateQuantity();
       }
-    }
+    },
   },
-}
+};
 </script>
 
 <style lang="postcss" scoped>
-
 .group-item-wrapper {
   /* @apply flex-shrink-0; */
   @apply p-2;
@@ -298,6 +297,4 @@ export default {
   @apply p-2;
   @apply text-secondary text-opacity-50;
 }
-
-
 </style>

@@ -3,7 +3,7 @@
     <div class="product">
       <img
         class="product-image"
-        :src="imageProduct(product.image)"
+        :src="product.image"
         @click="detailProduct()"
       />
 
@@ -109,16 +109,6 @@ export default {
       "addItemsToWishlist",
       "getWishlist",
     ]),
-
-    imageProduct(name) {
-      try {
-        let img = "/products/" + name;
-        return img;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
     detailProduct() {
       this.getSelectedProduct(this.product._id);
       const id = this.product._id;
@@ -157,28 +147,30 @@ export default {
         let config = {
           headers: { Authorization: "bearer " + token },
         };
-        let items = [{product: this.product._id, quantity: 1, price: this.product.price}];
+        let items = [
+          { product: this.product._id, quantity: 1, price: this.product.price },
+        ];
         await CartAPI.add(items, config)
-        .then((res) => {
-          console.log(res.data);
-          this.getUserCart().then(() => {
+          .then((res) => {
+            console.log(res.data);
+            this.getUserCart().then(() => {
+              this.stop_load();
+              this.$swal.fire(
+                "Oh great!",
+                "Add product to cart successfully!",
+                "success"
+              );
+            });
+          })
+          .catch((error) => {
+            console.log(error);
             this.stop_load();
             this.$swal.fire(
-              'Oh great!',
-              'Add product to cart successfully!',
-              'success'
+              "Oh no!",
+              "Something went wrong. Double check your work.",
+              "fail"
             );
           });
-        })
-        .catch((error) => {
-          console.log(error);
-          this.stop_load();
-          this.$swal.fire(
-            'Oh no!',
-            'Something went wrong. Double check your work.',
-            'fail'
-          );
-        });
       } else {
         this.$swal.fire(
           "Login to your account",

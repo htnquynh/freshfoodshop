@@ -2,8 +2,8 @@
   <div class="order">
     <div class="order-header">
       <div class="order-code-date">
-        <p class="order-code">Order {{ order._id | toCODE}}</p>
-        <p class="order-date">Order at: {{ order.date | toDateTime}}</p>
+        <p class="order-code">Order {{ order._id | toCODE }}</p>
+        <p class="order-date">Order at: {{ order.date | toDateTime }}</p>
       </div>
       <p class="order-status">{{ order.status }}</p>
     </div>
@@ -12,12 +12,15 @@
 
     <div class="order-list-item">
       <OrderItem
-        v-for="item in order.orderItems" 
+        v-for="item in order.orderItems"
         :key="item._id"
-        :item="item"/>
+        :item="item"
+      />
     </div>
 
-    <p class="order-price">Total: <span>{{ order.total_price | toVND }}</span></p>
+    <p class="order-price">
+      Total: <span>{{ order.total_price | toVND }}</span>
+    </p>
     <hr class="order-break-line" />
 
     <div class="order-footer">
@@ -26,20 +29,26 @@
       <p>Phone: {{ order.phone }}</p>
     </div>
 
-    <a v-if="order.status == 'Pending'"
-        @click="updateOrderStatus('Cancel')" class="order-action">
-        Cancel
+    <a
+      v-if="order.status == 'Pending'"
+      @click="updateOrderStatus('Cancel')"
+      class="order-action"
+    >
+      Cancel
     </a>
 
-    <a v-if="order.status == 'Delivering'"
-        @click="updateOrderStatus('Received')" class="order-action">
-        Received
+    <a
+      v-if="order.status == 'Delivering'"
+      @click="updateOrderStatus('Received')"
+      class="order-action"
+    >
+      Received
     </a>
   </div>
 </template>
 
 <script>
-import OrderItem from './OrderItem.vue';
+import OrderItem from "./OrderItem.vue";
 import OrderAPI from "../api/OrderAPI";
 import { mapActions } from "vuex";
 
@@ -84,14 +93,6 @@ export default {
   },
   methods: {
     ...mapActions(["getOrders", "start_load", "stop_load"]),
-    imageProduct(name) {
-      try {
-        let img = "/products/" + name;
-        return img;
-      } catch (error) {
-        console.log(error);
-      }
-    },
     async updateOrderStatus(status) {
       this.start_load();
       let token = JSON.parse(sessionStorage.getItem("user_login"));
@@ -100,27 +101,27 @@ export default {
       };
 
       await OrderAPI.updateStatus(this.order._id, status, config)
-      .then((res) => {
-        console.log(res);
-        this.$swal.fire(
-          'Success!',
-          `You have successfully ${status} order`,
-          'success'
-        )
-        this.getOrders().then(() => {
-          this.$emit("update-order");
+        .then((res) => {
+          console.log(res);
+          this.$swal.fire(
+            "Success!",
+            `You have successfully ${status} order`,
+            "success"
+          );
+          this.getOrders().then(() => {
+            this.$emit("update-order");
+            this.stop_load();
+          });
+        })
+        .catch((err) => {
+          console.log(err);
           this.stop_load();
+          this.$swal.fire(
+            "Oh no!",
+            "Something went wrong. Double check your work.",
+            "fail"
+          );
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        this.stop_load();
-        this.$swal.fire(
-          'Oh no!',
-          'Something went wrong. Double check your work.',
-          'fail'
-        );
-      });
     },
   },
 };

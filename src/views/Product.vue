@@ -1,17 +1,16 @@
 <template>
   <div class="home relative">
-    <TheHeader class="header-page"/>
-    <MiniCart/>
+    <TheHeader class="header-page" />
+    <MiniCart />
     <div class="page-content">
       <div class="product-page">
         <div class="product-detail">
-        
           <div class="product-col">
             <div class="product-image">
-              <img :src="imageProduct(selectedProduct.image)"/>
+              <img :src="selectedProduct.image" />
             </div>
           </div>
-          
+
           <div class="product-col">
             <div class="product-spec">
               <p class="product-category">{{ selectedProduct.category }}</p>
@@ -40,10 +39,12 @@
                     />
                   </g>
                 </svg>
-                <p><span class="value">{{ selectedProduct.calo }}</span> kcal</p>
+                <p>
+                  <span class="value">{{ selectedProduct.calo }}</span> kcal
+                </p>
               </div>
               <p class="product-short-description">
-                {{ selectedProduct.description.substring(0, 240) + '...'}}
+                {{ selectedProduct.description.substring(0, 240) + "..." }}
               </p>
 
               <div class="product-qty flex flex-row items-center gap-4">
@@ -62,10 +63,7 @@
                       />
                     </svg>
                   </button>
-                  <input type="number"
-                    min=1
-                    max=99999
-                    v-model="quantity"/>
+                  <input type="number" min="1" max="99999" v-model="quantity" />
                   <button class="btn-add-qty" @click="plusQuantity()">
                     <svg
                       width="24"
@@ -86,19 +84,23 @@
                   </button>
                 </div>
 
-                <p class="py-4">{{ this.selectedProduct.quantity_remaining }}kg available</p>
+                <p class="py-4">
+                  {{ this.selectedProduct.quantity_remaining }}kg available
+                </p>
               </div>
 
               <div class="product-action">
-                <p class="font-medium text-peach-500"
+                <p
+                  class="font-medium text-peach-500"
                   v-show="selectedProduct.quantity_remaining <= 0"
                 >
                   Out of Stock
                 </p>
-                <a 
-                  v-show="selectedProduct.quantity_remaining > 0" 
-                  class="btn-add-to-cart" 
-                  @click="addToCart()">
+                <a
+                  v-show="selectedProduct.quantity_remaining > 0"
+                  class="btn-add-to-cart"
+                  @click="addToCart()"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
@@ -113,9 +115,10 @@
                   </svg>
                   <span>Add to cart</span>
                 </a>
-                <a 
+                <a
                   class="btn-add-to-wishlist"
-                  @click="addToWishlist(selectedProduct)">
+                  @click="addToWishlist(selectedProduct)"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
@@ -132,7 +135,6 @@
                   <span>Like it!</span>
                 </a>
               </div>
-              
             </div>
           </div>
         </div>
@@ -147,42 +149,50 @@
         <div class="section-featured-product">
           <div class="section-product">
             <div class="section-product-title">
-              <h2 class="section-title">
-                You May Also Like.
-              </h2>
+              <h2 class="section-title">You May Also Like.</h2>
               <router-link to="/shop">
                 <a class="hover:text-gold-500">
                   More
-                  <svg xmlns="http://www.w3.org/2000/svg" 
-                    enable-background="new 0 0 24 24" 
-                    height="24px" 
-                    viewBox="0 0 24 24" 
-                    width="24px" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    enable-background="new 0 0 24 24"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="currentColor"
+                  >
                     <rect fill="none" height="24" width="24" />
-                    <path d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z" />
+                    <path
+                      d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z"
+                    />
                   </svg>
                 </a>
               </router-link>
             </div>
-              <div class="section-list-product">
-                <Product class="product" v-for="item in more_product" :key='item._id' :product='item'/>
-              </div>
+            <div class="section-list-product">
+              <Product
+                class="product"
+                v-for="item in more_product"
+                :key="item._id"
+                :product="item"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <TheSubscribe/>
-    <TheFooter/>
+    <TheSubscribe />
+    <TheFooter />
   </div>
 </template>
 
 <script>
-import TheHeader from '../components/TheHeader.vue';
-import TheFooter from '../components/TheFooter.vue';
-import TheSubscribe from '../components/TheSubscribe.vue';
-import MiniCart from '../components/MiniCart.vue';
+import TheHeader from "../components/TheHeader.vue";
+import TheFooter from "../components/TheFooter.vue";
+import TheSubscribe from "../components/TheSubscribe.vue";
+import MiniCart from "../components/MiniCart.vue";
 
-import Product from '../components/Product.vue';
+import Product from "../components/Product.vue";
 
 import { mapActions, mapGetters } from "vuex";
 import CartAPI from "../api/CartAPI";
@@ -231,20 +241,15 @@ export default {
     },
   },
   methods: {
-    ...mapActions(
-      [
-        "getProducts", 
-        "getUserCart",
-        "addItemToCart", 
-        "addItemToWishlist",
-        "addItemsToWishlist",
-        "start_load",
-        "stop_load",
-      ]
-    ),
-    imageProduct(name) {
-      return "/products/" + name;
-    },
+    ...mapActions([
+      "getProducts",
+      "getUserCart",
+      "addItemToCart",
+      "addItemToWishlist",
+      "addItemsToWishlist",
+      "start_load",
+      "stop_load",
+    ]),
     minusQuantity() {
       if (this.quantity > 1) {
         this.quantity--;
@@ -258,19 +263,15 @@ export default {
     addToCart() {
       if (this.quantity < 1) {
         this.quantity = 1;
-        this.$swal.fire(
-          'Uh oh!',
-          'Quantity must be at least 1!',
-          'fail'
-        );
+        this.$swal.fire("Uh oh!", "Quantity must be at least 1!", "fail");
         return;
       }
       if (this.selectedProduct.quantity_remaining < this.quantity) {
         this.quantity = this.selectedProduct.quantity_remaining;
         this.$swal.fire(
-          'Uh oh!',
+          "Uh oh!",
           `This product is only ${this.selectedProduct.quantity_remaining}kg`,
-          'fail'
+          "fail"
         );
         return;
       }
@@ -289,41 +290,41 @@ export default {
 
         console.log(parseInt(this.selectedProduct.price));
         console.log(this.quantity);
-        console.log(total_price); 
-        
+        console.log(total_price);
+
         let items = [
           {
-            product: this.selectedProduct._id, 
-            quantity: this.quantity, 
+            product: this.selectedProduct._id,
+            quantity: this.quantity,
             price: total_price.toString(),
-          }
+          },
         ];
         await CartAPI.add(items, config)
-        .then((res) => {
-          console.log(res.data);
-          this.getUserCart().then(() => {
+          .then((res) => {
+            console.log(res.data);
+            this.getUserCart().then(() => {
+              this.stop_load();
+              this.$swal.fire(
+                "Oh great!",
+                "Add product to cart successfully!",
+                "success"
+              );
+            });
+          })
+          .catch((error) => {
+            console.log(error);
             this.stop_load();
             this.$swal.fire(
-              'Oh great!',
-              'Add product to cart successfully!',
-              'success'
+              "Oh no!",
+              "Something went wrong. Double check your work.",
+              "fail"
             );
           });
-        })
-        .catch((error) => {
-          console.log(error);
-          this.stop_load();
-          this.$swal.fire(
-            'Oh no!',
-            'Something went wrong. Double check your work.',
-            'fail'
-          );
-        });
       } else {
         this.$swal.fire(
-          'Login to your account',
-          'You must be logged in to be able to add products to your cart.',
-          'warning'
+          "Login to your account",
+          "You must be logged in to be able to add products to your cart.",
+          "warning"
         );
         this.$router.push({
           name: "Login",
@@ -337,9 +338,9 @@ export default {
       if (item) {
         this.stop_load();
         this.$swal.fire(
-          'Uh oh!',
-          'Product already exists in wishlist!',
-          'info'
+          "Uh oh!",
+          "Product already exists in wishlist!",
+          "info"
         );
         return;
       }
@@ -348,10 +349,10 @@ export default {
         this.addItemsToWishlist().then(() => {
           this.stop_load();
           this.$swal.fire(
-            'Great!',
-            'Added product to wishlist successfully!',
-            'success'
-          )
+            "Great!",
+            "Added product to wishlist successfully!",
+            "success"
+          );
         });
       });
     },
@@ -372,7 +373,6 @@ export default {
   @apply p-4;
   /* @apply flex flex-col; */
 }
-
 
 .product-page {
   @apply w-full max-w-5xl mx-auto;
@@ -432,13 +432,13 @@ export default {
 }
 
 .product-name::after {
-  content: '';
+  content: "";
   display: block;
 
   width: 128px;
   height: 12px;
 
-  background-color: theme('colors.aqua-blue');
+  background-color: theme("colors.aqua-blue");
 
   position: absolute;
   bottom: 8px;
@@ -533,7 +533,6 @@ span.value {
 }
 
 .btn-add-qty {
-  
   @apply text-secondary bg-white;
   /* @apply transform -translate-x-2; */
 }
@@ -589,7 +588,7 @@ a.btn-add-to-wishlist {
 }
 
 .product-description h4:before {
-  content: '';
+  content: "";
   display: block;
 
   @apply flex-grow-0;
@@ -597,7 +596,7 @@ a.btn-add-to-wishlist {
   width: 64px;
   height: 1px;
 
-  background-color: theme('colors.secondary');
+  background-color: theme("colors.secondary");
 
   /* position: absolute;
   bottom: 8px; */
@@ -606,7 +605,7 @@ a.btn-add-to-wishlist {
 }
 
 .product-description h4:after {
-  content: '';
+  content: "";
   display: block;
 
   @apply flex-grow-0;
@@ -614,7 +613,7 @@ a.btn-add-to-wishlist {
   width: 100%;
   height: 1px;
 
-  background-color: theme('colors.secondary');
+  background-color: theme("colors.secondary");
 
   /* position: absolute;
   bottom: 8px; */
@@ -644,7 +643,6 @@ a.btn-add-to-wishlist {
 .section-product-title a {
   @apply w-max flex-shrink-0;
   @apply flex flex-row items-center gap-2;
-
 }
 
 .section-product-title a svg {
@@ -665,5 +663,4 @@ a.btn-add-to-wishlist {
 
   @apply grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4;
 }
-
 </style>

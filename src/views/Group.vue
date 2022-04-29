@@ -1,55 +1,76 @@
 <template>
   <div class="home relative">
-    <TheHeader class="header-page"/>
-    <MiniCart/>
+    <TheHeader class="header-page" />
+    <MiniCart />
     <div class="page-content">
       <div class="product-page">
         <div class="product-detail">
-        
           <div class="product-col">
             <div class="product-image">
-              <img :src="imageProduct(selectedGroup.image)"/>
+              <img :src="selectedGroup.image" />
             </div>
           </div>
-          
+
           <div class="product-col">
             <div class="product-spec">
-
               <h2 class="product-name">{{ selectedGroup.title }}</h2>
 
               <div class="group-calo-price">
                 <div class="group-calo">
-                  <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    enable-background="new 0 0 24 24"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="currentColor"
+                  >
                     <g>
                       <rect fill="none" height="24" width="24" y="0" />
                     </g>
                     <g>
-                      <path d="M19.48,12.35c-1.57-4.08-7.16-4.3-5.81-10.23c0.1-0.44-0.37-0.78-0.75-0.55C9.29,3.71,6.68,8,8.87,13.62 c0.18,0.46-0.36,0.89-0.75,0.59c-1.81-1.37-2-3.34-1.84-4.75c0.06-0.52-0.62-0.77-0.91-0.34C4.69,10.16,4,11.84,4,14.37 c0.38,5.6,5.11,7.32,6.81,7.54c2.43,0.31,5.06-0.14,6.95-1.87C19.84,18.11,20.6,15.03,19.48,12.35z M10.2,17.38 c1.44-0.35,2.18-1.39,2.38-2.31c0.33-1.43-0.96-2.83-0.09-5.09c0.33,1.87,3.27,3.04,3.27,5.08C15.84,17.59,13.1,19.76,10.2,17.38z" />
+                      <path
+                        d="M19.48,12.35c-1.57-4.08-7.16-4.3-5.81-10.23c0.1-0.44-0.37-0.78-0.75-0.55C9.29,3.71,6.68,8,8.87,13.62 c0.18,0.46-0.36,0.89-0.75,0.59c-1.81-1.37-2-3.34-1.84-4.75c0.06-0.52-0.62-0.77-0.91-0.34C4.69,10.16,4,11.84,4,14.37 c0.38,5.6,5.11,7.32,6.81,7.54c2.43,0.31,5.06-0.14,6.95-1.87C19.84,18.11,20.6,15.03,19.48,12.35z M10.2,17.38 c1.44-0.35,2.18-1.39,2.38-2.31c0.33-1.43-0.96-2.83-0.09-5.09c0.33,1.87,3.27,3.04,3.27,5.08C15.84,17.59,13.1,19.76,10.2,17.38z"
+                      />
                     </g>
                   </svg>
-                  <p><span class="value">{{ selectedGroup.calo }}</span> kcal</p>
+                  <p>
+                    <span class="value">{{ selectedGroup.calo }}</span> kcal
+                  </p>
                 </div>
 
                 <div class="group-price">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="currentColor"
+                  >
                     <path d="M0 0h24v24H0V0z" fill="none" />
-                    <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM13 20.01L4 11V4h7v-.01l9 9-7 7.02z" />
+                    <path
+                      d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM13 20.01L4 11V4h7v-.01l9 9-7 7.02z"
+                    />
                     <circle cx="6.5" cy="6.5" r="1.5" />
                   </svg>
-                  <p><span class="value">{{ selectedGroup.price | toVND }}</span> </p>
+                  <p>
+                    <span class="value">{{ selectedGroup.price | toVND }}</span>
+                  </p>
                 </div>
               </div>
 
               <div class="product-action">
-                <p class="font-medium text-lg text-peach-500"
+                <p
+                  class="font-medium text-lg text-peach-500"
                   v-if="!enough_quantity"
                 >
                   Out of Stock
                 </p>
-                <a 
-                  v-if="enough_quantity" 
-                  class="btn-add-to-cart" 
-                  @click="addAllToCart()">
+                <a
+                  v-if="enough_quantity"
+                  class="btn-add-to-cart"
+                  @click="addAllToCart()"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
@@ -71,7 +92,11 @@
 
                 <div class="group-list-item-wrapper">
                   <div class="group-list-item">
-                    <GroupItem v-for="item in selectedGroup.material" :key='item._id' :product='item.product'/>
+                    <GroupItem
+                      v-for="item in selectedGroup.material"
+                      :key="item._id"
+                      :product="item.product"
+                    />
                   </div>
                 </div>
               </div>
@@ -89,42 +114,45 @@
         <div class="section-recommend-menu">
           <div class="section-product">
             <div class="section-product-title">
-              <h2 class="section-title">
-                You May Also Like.
-              </h2>
+              <h2 class="section-title">You May Also Like.</h2>
               <router-link to="/recommend-menu">
                 <a class="hover:text-gold-500">
                   More
-                  <svg xmlns="http://www.w3.org/2000/svg" 
-                    enable-background="new 0 0 24 24" 
-                    height="24px" 
-                    viewBox="0 0 24 24" 
-                    width="24px" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    enable-background="new 0 0 24 24"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="currentColor"
+                  >
                     <rect fill="none" height="24" width="24" />
-                    <path d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z" />
+                    <path
+                      d="M15,5l-1.41,1.41L18.17,11H2V13h16.17l-4.59,4.59L15,19l7-7L15,5z"
+                    />
                   </svg>
                 </a>
               </router-link>
             </div>
             <div class="section-list-product">
-              <Group v-for="item in more_group" :key='item._id' :group='item'/>
+              <Group v-for="item in more_group" :key="item._id" :group="item" />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <TheSubscribe/>
-    <TheFooter/>
+    <TheSubscribe />
+    <TheFooter />
   </div>
 </template>
 
 <script>
-import TheHeader from '../components/TheHeader.vue';
-import TheFooter from '../components/TheFooter.vue';
-import TheSubscribe from '../components/TheSubscribe.vue';
-import MiniCart from '../components/MiniCart.vue';
+import TheHeader from "../components/TheHeader.vue";
+import TheFooter from "../components/TheFooter.vue";
+import TheSubscribe from "../components/TheSubscribe.vue";
+import MiniCart from "../components/MiniCart.vue";
 
-import Group from '../components/Group.vue';
+import Group from "../components/Group.vue";
 import GroupItem from "../components/GroupItem.vue";
 
 import { mapActions, mapGetters } from "vuex";
@@ -137,7 +165,7 @@ export default {
     TheSubscribe,
     MiniCart,
     Group,
-    GroupItem
+    GroupItem,
   },
   data() {
     return {
@@ -155,7 +183,7 @@ export default {
     ...mapGetters(["is_login", "selectedGroup", "groups"]),
     enough_quantity() {
       return this.checkQuantity();
-    }
+    },
   },
   filters: {
     toVND: function (value) {
@@ -176,13 +204,10 @@ export default {
   },
   methods: {
     ...mapActions(["getGroups", "getUserCart", "start_load", "stop_load"]),
-    imageProduct(name) {
-      return "/group/" + name;
-    },
-    checkQuantity(){
+    checkQuantity() {
       for (const item of this.selectedGroup.material) {
         console.log(item.product.quantity_remaining);
-        if(item.product.quantity_remaining == 0) {
+        if (item.product.quantity_remaining == 0) {
           console.log(item.product.quantity_remaining == 0);
           return false;
         }
@@ -201,41 +226,39 @@ export default {
 
         for (const item of this.selectedGroup.material) {
           console.log(item.product.price);
-          items.push(
-            {
-              product: item.product._id, 
-              quantity: 1, 
-              price: item.product.price,
-            }
-          )
+          items.push({
+            product: item.product._id,
+            quantity: 1,
+            price: item.product.price,
+          });
         }
         console.log(items);
         CartAPI.add(items, config)
-        .then((res) => {
-          console.log(res.data);
-          this.getUserCart().then(() => {
+          .then((res) => {
+            console.log(res.data);
+            this.getUserCart().then(() => {
+              this.stop_load();
+              this.$swal.fire(
+                "Oh great!",
+                "Add all product to cart successfully!",
+                "success"
+              );
+            });
+          })
+          .catch((error) => {
             this.stop_load();
+            console.log(error);
             this.$swal.fire(
-              'Oh great!',
-              'Add all product to cart successfully!',
-              'success'
+              "Oh no!",
+              "Something went wrong. Double check your work.",
+              "fail"
             );
           });
-        })
-        .catch((error) => {
-          this.stop_load();
-          console.log(error);
-          this.$swal.fire(
-            'Oh no!',
-            'Something went wrong. Double check your work.',
-            'fail'
-          );
-        });
       } else {
         this.$swal.fire(
-          'Login to your account',
-          'You must be logged in to be able to add products to your cart.',
-          'warning'
+          "Login to your account",
+          "You must be logged in to be able to add products to your cart.",
+          "warning"
         );
         this.$router.push({
           name: "Login",
@@ -318,11 +341,11 @@ export default {
 }
 
 .product-name::after {
-  content: '';
+  content: "";
   display: block;
   width: 128px;
   height: 12px;
-  background-color: theme('colors.aqua-blue');
+  background-color: theme("colors.aqua-blue");
   position: absolute;
   bottom: 8px;
   z-index: -1;
@@ -334,11 +357,13 @@ export default {
   @apply flex flex-row justify-between items-center gap-2;
 }
 
-.group-calo, .group-price {
+.group-calo,
+.group-price {
   @apply flex flex-row items-center gap-3;
 }
 
-.group-calo svg, .group-price svg {
+.group-calo svg,
+.group-price svg {
   @apply w-8 h-8 p-1;
   @apply rounded-lg;
 }
@@ -351,7 +376,8 @@ export default {
   @apply text-peach-500 bg-peach-100;
 }
 
-.group-calo p, .group-price p {
+.group-calo p,
+.group-price p {
   @apply text-base;
 }
 
@@ -378,22 +404,22 @@ span.value {
 }
 
 .product-description h4:before {
-  content: '';
+  content: "";
   display: block;
   @apply flex-grow-0;
   width: 64px;
   height: 1px;
-  background-color: theme('colors.secondary');
+  background-color: theme("colors.secondary");
   z-index: -1;
 }
 
 .product-description h4:after {
-  content: '';
+  content: "";
   display: block;
   @apply flex-grow-0;
   width: 100%;
   height: 1px;
-  background-color: theme('colors.secondary');
+  background-color: theme("colors.secondary");
   z-index: -1;
 }
 
@@ -460,7 +486,6 @@ span.value {
 .section-product-title a {
   @apply w-max flex-shrink-0;
   @apply flex flex-row items-center gap-2;
-
 }
 
 .section-product-title a svg {
@@ -485,5 +510,4 @@ a.btn-add-to-cart {
 
   box-shadow: rgba(255, 201, 40, 0.6) 0px 12px 10px -10px;
 }
-
 </style>

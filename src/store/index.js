@@ -21,7 +21,7 @@ const storeData = {
     wishlist,
     order,
     group,
-    loading
+    loading,
   },
   plugins: [
     createPersistedState({
